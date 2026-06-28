@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+
+.env
+*.env
+
+data/
+corpus/
+chunks/
+embeddings/
+logs/
+
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
