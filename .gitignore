@@ -14,7 +14,7 @@ dist/
 build/
 
 # ============================
-# Environment
+# Configuration
 # ============================
 .env
 *.env
