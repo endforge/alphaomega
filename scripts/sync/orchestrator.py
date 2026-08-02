@@ -10,15 +10,19 @@ coordinates the overall synchronization workflow.
 """
 from database.processing_jobs import create_processing_job
 
+from scripts.sync.sync_record import SyncRecord
+
+from scripts.connectors.connector_loader import load_connector
+
 def run_sync(source_name: str) -> None:
     
     print(f"Starting synchronization for {source_name}...")
 
     job = create_processing_job(source_name)
 
-    # TODO: Create processing job
+    sync_record = SyncRecord()
 
-    # TODO: Load the requested connector
+    connector = load_connector(source_name)
 
     # TODO: Execute the connector
 
