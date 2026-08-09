@@ -28,6 +28,7 @@ class ConnectorSection(BaseSection):
         super().__init__()
 
         self.source_name = source_name
+        self.object_type = None
         self.connection_succeeded = False
         self.raw_objects = []
         self.raw_metadata = {}

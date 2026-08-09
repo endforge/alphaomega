@@ -6,7 +6,8 @@ Purpose:
 """
 
 from scripts.connectors.base_connector import BaseConnector
-from scripts.graph_connection import graph_get
+from scripts.connectors.ms_graph.graph_connection import graph_get
+from scripts.connectors.connector_section import ConnectorSection
 
 
 ONEDRIVE = "onedrive"
@@ -21,21 +22,30 @@ class GraphConnector(BaseConnector):
     Connector for Microsoft Graph sources.
     """
 
-    def run(self, source_name, processing_job):
+    def run(self, source_name):
         """
         Execute the Connector stage.
 
-        Returns:
-            ConnectorSection
+        Parameters
+        ----------
+        source_name : str
+            Microsoft Graph source to retrieve.
+
+        Returns
+        -------
+        ConnectorSection
+            Completed, validated, immutable ConnectorSection.
         """
 
         source = source_name.lower()
 
         if source == ONEDRIVE:
             endpoint = ONEDRIVE_ENDPOINT
+            object_type = "driveRoot"
 
         elif source == ONENOTE:
             endpoint = ONENOTE_ENDPOINT
+            object_type = "notebook"
 
         else:
             raise ValueError(
@@ -44,14 +54,18 @@ class GraphConnector(BaseConnector):
 
         response = graph_get(endpoint)
 
-        # TODO:
-        # Create ConnectorSection
+        connector_section = ConnectorSection(source)
 
-        # TODO:
-        # Store raw Graph response
+        connector_section.object_type = object_type
 
-        # TODO:
-        # Lock ConnectorSection
+        connector_section.connection_succeeded = True
 
-        # TODO:
-        # Return ConnectorSection
+        #
+        # Preserve the Source of Truth exactly as returned.
+        # No interpretation or normalization occurs here.
+        #
+        connector_section.raw_objects = response.json()
+
+        connector_section.lock()
+
+        return connector_section

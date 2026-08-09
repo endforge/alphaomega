@@ -11,17 +11,24 @@ class BaseConnector:
     Base class for all AlphaOmega connectors.
     """
 
-    def run(self, processing_job):
+    def run(self, source_name):
         """
-        Execute the connector.
+        Execute the Connector stage.
 
-        Returns:
-            ConnectorSection:
-                A completed connector section.
+        Parameters
+        ----------
+        source_name : str
+            Name of the Source of Truth.
 
-        Raises:
-            NotImplementedError:
-                If the connector does not implement this method.
+        Returns
+        -------
+        ConnectorSection
+            A completed ConnectorSection.
+
+        Raises
+        ------
+        NotImplementedError
+            If the connector does not implement this method.
         """
 
         raise NotImplementedError(
