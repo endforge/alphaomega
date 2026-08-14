@@ -9,6 +9,8 @@ It translates Microsoft-specific representations into AlphaOmega's
 canonical synchronization concepts.
 """
 
+from collections.abc import Mapping
+
 from common.object_types import CONTAINER, CONTENT
 
 
@@ -17,6 +19,7 @@ from common.object_types import CONTAINER, CONTENT
 # ============================================================================
 
 GRAPH_NOTEBOOK = "notebook"
+GRAPH_SECTION_GROUP = "sectionGroup"
 GRAPH_ONENOTE_SECTION = "section"
 GRAPH_ONENOTE_PAGE = "page"
 GRAPH_DRIVE_ROOT = "driveRoot"
@@ -29,6 +32,7 @@ GRAPH_DRIVE_ITEM = "driveItem"
 
 GRAPH_OBJECT_TYPE_MAPPING = {
     GRAPH_NOTEBOOK: CONTAINER,
+    GRAPH_SECTION_GROUP: CONTAINER,
     GRAPH_ONENOTE_SECTION: CONTAINER,
     GRAPH_ONENOTE_PAGE: CONTENT,
 
@@ -43,13 +47,26 @@ GRAPH_OBJECT_TYPE_MAPPING = {
 
 GRAPH_FIELD_MAPPING = {
     "id": "source_object_id",
+
+    # Microsoft Graph uses different fields for object names depending
+    # on the source object type.
     "displayName": "name",
     "name": "name",
+    "title": "name",
+
     "createdDateTime": "source_created_at",
     "lastModifiedDateTime": "source_modified_at",
     "webUrl": "source_url",
+
+    # OneDrive hierarchy
     "parentReference.id": "source_parent_object_id",
     "parentReference.path": "source_path",
+
+    # OneNote section relationship.
+    #
+    # Connector may override this for nested OneNote pages after
+    # page-level hierarchy has been proven.
+    "parentSection.id": "source_parent_object_id",
 }
 
 
@@ -62,10 +79,12 @@ RESERVED_GRAPH_FIELDS = {
     "@odata.type",
     "displayName",
     "name",
+    "title",
     "createdDateTime",
     "lastModifiedDateTime",
     "webUrl",
     "parentReference",
+    "parentSection",
 }
 
 
@@ -81,30 +100,43 @@ def get_canonical_object_type(source_object_type):
     Returns None if the object type is unsupported.
     """
 
-    return GRAPH_OBJECT_TYPE_MAPPING.get(source_object_type)
+    return GRAPH_OBJECT_TYPE_MAPPING.get(
+        source_object_type
+    )
 
 
-from collections.abc import Mapping
-
-
-def get_nested_value(raw_object, field_path):
+def get_nested_value(
+    raw_object,
+    field_path,
+):
     """
     Retrieve a value from a Microsoft Graph object using dot notation.
 
-    Example:
+    Examples:
         parentReference.id
+        parentReference.path
+        parentSection.id
     """
 
     value = raw_object
 
-    for field_name in field_path.split("."):
+    for field_name in (
+        field_path.split(".")
+    ):
 
-        if not isinstance(value, Mapping):
+        if not isinstance(
+            value,
+            Mapping,
+        ):
+
             return None
 
-        value = value.get(field_name)
+        value = value.get(
+            field_name
+        )
 
         if value is None:
+
             return None
 
     return value

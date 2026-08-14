@@ -1,0 +1,39 @@
+###########################################################################################################################
+This file represents the baseline test for OneDrive.
+CT in the title refers to Connector and Translator.
+Connector and Translator were tested end to end and this is the result and is recorded as the baseline for future tests.
+Last successful test run: 08.14.2026 @ 1312 hours.
+###########################################################################################################################
+
+PS C:\Users\david\onedrive\AlphaOmega> python -m scripts.code_testing.test_graph_translator_onedrive
+
+================================================================================
+FULL ONEDRIVE CONNECTOR -> TRANSLATOR TEST
+================================================================================
+
+Running full OneDrive Connector...
+Connector completed successfully.
+
+Connector objects      : 84604
+Connector object types : {'driveItem': 84604}
+Enumeration complete   : True
+Retrieval strategy     : delta
+
+Running Translator...
+Translator completed successfully.
+
+Validating full pipeline...
+
+================================================================================
+SUMMARY
+================================================================================
+Connector objects      : 84604
+Translated records     : 84604
+Record errors          : 0
+Canonical object types : {'CONTAINER': 6415, 'CONTENT': 78189}
+Validation failures    : 0
+
+================================================================================
+FINAL RESULT
+================================================================================
+FULL ONEDRIVE CONNECTOR -> TRANSLATOR: PASS

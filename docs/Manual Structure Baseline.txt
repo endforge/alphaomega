@@ -1,0 +1,81 @@
+##########################################################################################################################################################################################
+This file exists solely as a manual baseline for comparison when running the Connector → Translator pipeline test scripts.
+The expected structures below were manually constructed from known OneDrive and OneNote objects and represent the verified source hierarchy the pipeline test output should reproduce.
+Created: 08.14.2026
+##########################################################################################################################################################################################
+
+
+#############################
+OneDrive Writings Contents
+#############################
+Writings
+	Conversations with Death
+		Chapter Four - Unnamed Book.docx
+		Chapter One - Unnamed Book.docx
+		Chapter Three - Unnamed Book.docx
+		Chapter Two - Unnamed Book.docx
+		Wake Up.docx
+	DnD 5e Adv
+		Christmas Adventure.docx
+		War Comes.docx
+	Necromancer
+		Necromancer.docx
+	Python
+		game.over.py
+	RH_AudioBook
+		Recordings
+			David_Audacity_Test.wav
+			David_Audio_Recordings_ALL.zip
+			Man_In_Crowd_2_c3_n1.wav
+			Paulus_c8_n1.wav
+			Paulus_c8_n2.wav
+			Paulus_c8_n3.wav
+			Paulus_c8_n4.wav
+			Paulus_c8_n5.wav
+			Paulus_c8_n6.wav
+			Paulus_c8_n7.wav
+			Paulus_c8_n8.wav
+			RH_Audio_Recordings_ALL.aup3
+		Chpt 01 - Audio Recording.docx
+		Chpt 06 - Audio Recording.docx
+		Chpt 07 - Audio Recording.docx
+		Chpt 12 - Audio Recording.docx
+		Chpt 20 - Audio Recording.docx
+		Chpt 21 - Audio Recording.docx
+		When the Gods Are Away all reading v9.4.docx
+		WTGAA Character List by Chapter.docx
+	Accomplishments Questionnaire and Statement of Interest.docx
+	dmp_print_sig.PNG
+	dmp_sig_1.PNG
+	dmp_sig_2.PNG
+	dmp1.PNG
+	dmp2.PNG
+	dmp3.PNG
+	dmp4.PNG
+	dmp5PNG
+	dmp6.PNG
+	dmpsig.png
+	Morticia_Adams_vs_Trump.png
+	park_surname.pdf
+	Samuel.docx
+	UEC.docx
+	
+#############################
+OneNote Games Contents
+#############################
+Games [Notebook]
+	Minecraft Section]
+		Seeds [Page]
+		My World Realms - Hoesing and Park[Page]
+			Blueprints[Page]
+			Storage Build[Page]
+			Coordinates[Page]
+			Super GreenHouse Tower[Page]
+		Untitled[Page]
+		Untitled[Page]
+		Future Build Links[Page]
+		Untitled[Page]
+		World Names[Page]
+		Brayden's Seed World[Page]
+		Bedrock Commands[Page]
+		To Do[Page]

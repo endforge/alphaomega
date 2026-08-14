@@ -1,0 +1,40 @@
+###########################################################################################################################
+This file represents the baseline test for OneNote.
+CT in the title refers to Connector and Translator.
+Connector and Translator were tested end to end and this is the result and is recorded as the baseline for future tests.
+Last successful test run: 08.14.2026 @ 1200 hours.
+###########################################################################################################################
+
+PS C:\Users\david\onedrive\AlphaOmega> python -m scripts.code_testing.test_graph_translator_onenote
+
+================================================================================
+FULL ONENOTE CONNECTOR -> TRANSLATOR TEST
+================================================================================
+
+Running full OneNote Connector...
+Connector completed successfully.
+
+Connector objects      : 1689
+Connector object types : {'notebook': 23, 'section': 187, 'page': 1479}
+Enumeration complete   : True
+Retrieval strategy     : expanded_hierarchy_with_pagelevel
+
+Running Translator...
+Translator completed successfully.
+
+Validating full pipeline...
+
+================================================================================
+SUMMARY
+================================================================================
+Connector objects      : 1689
+Translated records     : 1689
+Record errors          : 0
+Canonical object types : {'CONTAINER': 210, 'CONTENT': 1479}
+Untitled pages         : 59
+Validation failures    : 0
+
+================================================================================
+FINAL RESULT
+================================================================================
+FULL ONENOTE CONNECTOR -> TRANSLATOR: PASS

@@ -4,16 +4,16 @@ Microsoft Graph connection for AlphaOmega.
 Responsibilities:
     - Authenticate with Microsoft Graph.
     - Maintain an authenticated session.
-    - Execute HTTP GET requests.
+    - Execute HTTP requests.
     - Return the raw HTTP response.
 
 This module does NOT:
-    - Know about OneNote notebooks.
-    - Know about sections.
-    - Know about pages.
-    - Parse JSON.
-    - Extract HTML.
-    - Save data.
+    - Know about OneDrive.
+    - Know about OneNote.
+    - Traverse repositories.
+    - Parse business objects.
+    - Normalize data.
+    - Perform synchronization decisions.
 """
 
 import requests
@@ -24,7 +24,7 @@ from config.settings import GRAPH_CLIENT_ID
 
 
 # ============================================================================
-# Configuration - Uses SCOPES for both OneNote and OneDrive
+# Configuration
 # ============================================================================
 
 AUTHORITY = "https://login.microsoftonline.com/common"
@@ -111,6 +111,22 @@ def _build_headers():
     }
 
 
+def _build_url(endpoint):
+    """
+    Build the complete Microsoft Graph request URL.
+
+    Microsoft Graph pagination returns @odata.nextLink as a complete URL.
+    Normal AlphaOmega requests provide only the endpoint beginning with "/".
+
+    This function supports both.
+    """
+
+    if endpoint.startswith("https://"):
+        return endpoint
+
+    return f"{GRAPH_BASE_URL}{endpoint}"
+
+
 def _graph_request(method, endpoint):
     """
     Execute an HTTP request against Microsoft Graph.
@@ -118,17 +134,18 @@ def _graph_request(method, endpoint):
     Parameters
     ----------
     method : str
-        HTTP method (GET, POST, PATCH, DELETE)
+        HTTP method.
 
     endpoint : str
         Microsoft Graph endpoint beginning with "/"
+        or a complete Microsoft Graph URL.
 
     Returns
     -------
     requests.Response
     """
 
-    url = f"{GRAPH_BASE_URL}{endpoint}"
+    url = _build_url(endpoint)
 
     headers = _build_headers()
 
@@ -136,6 +153,7 @@ def _graph_request(method, endpoint):
         method=method,
         url=url,
         headers=headers,
+        timeout=60,
     )
 
     response.raise_for_status()
@@ -153,4 +171,3 @@ def graph_get(endpoint):
     """
 
     return _graph_request("GET", endpoint)
-

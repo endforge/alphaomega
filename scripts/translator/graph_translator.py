@@ -12,6 +12,10 @@ and its mapping module. Downstream synchronization stages operate only
 on TranslatorRecord objects.
 """
 
+from collections.abc import Mapping
+from collections.abc import Sequence
+
+from common.object_types import CONTAINER
 from scripts.translator.base_translator import BaseTranslator
 from scripts.translator.graph_translator_mappings import (
     GRAPH_FIELD_MAPPING,
@@ -22,52 +26,67 @@ from scripts.translator.graph_translator_mappings import (
 from scripts.translator.translator_record import TranslatorRecord
 from scripts.translator.translator_section import TranslatorSection
 from scripts.sync.sync_exceptions import UnsupportedObjectTypeError
-from collections.abc import Mapping
-from collections.abc import Sequence
+
 
 class GraphTranslator(BaseTranslator):
     """
     Translator for Microsoft Graph sources.
     """
 
+    # ========================================================================
+    # Public Interface
+    # ========================================================================
+
     def run(self, connector_section):
         """
         Execute the Translator stage.
 
-        Parameters
-        ----------
-        connector_section : ConnectorSection
-            Completed ConnectorSection containing the raw Microsoft
-            Graph response.
+        Connector objects are individually typed by Connector.
 
-        Returns
-        -------
-        TranslatorSection
-            Completed and locked TranslatorSection containing
-            successfully translated records and any record-level errors.
-
-        Notes
-        -----
         Record-level errors affect only the individual source object.
         Remaining objects continue processing.
 
-        Stage-level errors are not suppressed and will propagate to the
-        synchronization orchestrator.
+        Stage-level errors propagate to the synchronization orchestrator.
         """
 
         translator_section = TranslatorSection()
 
-        raw_objects = self._get_source_objects(
+        connector_objects = self._get_source_objects(
             connector_section.raw_objects
         )
 
-        for raw_object in raw_objects:
+        for connector_object in connector_objects:
+
+            source_object_type = connector_object[
+                "source_object_type"
+            ]
+
+            raw_object = connector_object[
+                "raw_object"
+            ]
+
+            connector_metadata = (
+                connector_object.get(
+                    "connector_metadata",
+                    {},
+                )
+            )
 
             try:
+
                 translator_record = self._translate_record(
-                    source_name=connector_section.source_name,
-                    source_object_type=connector_section.object_type,
-                    raw_object=raw_object,
+                    source_name=(
+                        connector_section.source_name
+                    ),
+                    source_object_type=(
+                        source_object_type
+                    ),
+                    raw_object=(
+                        raw_object
+                    ),
+                    connector_metadata=(
+                        connector_metadata
+                    ),
                 )
 
                 translator_section.translated_records.append(
@@ -78,9 +97,18 @@ class GraphTranslator(BaseTranslator):
 
                 translator_section.record_errors.append(
                     self._build_record_error(
-                        source_name=connector_section.source_name,
-                        raw_object=raw_object,
-                        error=error,
+                        source_name=(
+                            connector_section.source_name
+                        ),
+                        source_object_type=(
+                            source_object_type
+                        ),
+                        raw_object=(
+                            raw_object
+                        ),
+                        error=(
+                            error
+                        ),
                     )
                 )
 
@@ -90,102 +118,182 @@ class GraphTranslator(BaseTranslator):
 
         return translator_section
 
-    def _get_source_objects(self, raw_data):
+    # ========================================================================
+    # Connector Input Validation
+    # ========================================================================
+
+    def _get_source_objects(
+        self,
+        raw_data,
+    ):
         """
-        Return individual Microsoft Graph source objects.
-
-        Microsoft Graph may return either:
-
-        - A collection response containing a "value" list.
-        - A single object response.
-
-        Parameters
-        ----------
-        raw_data : dict
-            Raw Microsoft Graph response preserved by Connector.
-
-        Returns
-        -------
-        list
-            Individual Microsoft Graph objects.
-
-        Raises
-        ------
-        TypeError
-            If Connector output does not contain a valid Microsoft
-            Graph response structure.
+        Validate and return Microsoft Graph objects received from Connector.
         """
 
-        if not isinstance(raw_data, Mapping):
+        if (
+            not isinstance(
+                raw_data,
+                Sequence,
+            )
+            or isinstance(
+                raw_data,
+                (str, bytes),
+            )
+        ):
+
             raise TypeError(
                 "Translator stage received invalid Microsoft Graph "
-                "Connector output. Expected a mapping."
+                "Connector output. Expected a sequence of Connector "
+                "objects."
             )
 
-        if "value" in raw_data:
+        for connector_object in raw_data:
 
-            objects = raw_data["value"]
-
-            if (
-                not isinstance(objects, Sequence)
-                or isinstance(objects, (str, bytes))
+            if not isinstance(
+                connector_object,
+                Mapping,
             ):
+
                 raise TypeError(
                     "Translator stage received invalid Microsoft Graph "
-                    "collection data. The 'value' field must contain "
-                    "a sequence."
+                    "Connector object. Expected a mapping."
                 )
 
-            return objects
+            if (
+                "source_object_type"
+                not in connector_object
+            ):
 
-        return [raw_data]
+                raise TypeError(
+                    "Translator stage received Microsoft Graph "
+                    "Connector object without source_object_type."
+                )
 
-    def _translate_record(self, source_name, source_object_type, raw_object,):
+            if (
+                "raw_object"
+                not in connector_object
+            ):
+
+                raise TypeError(
+                    "Translator stage received Microsoft Graph "
+                    "Connector object without raw_object."
+                )
+
+            source_object_type = (
+                connector_object[
+                    "source_object_type"
+                ]
+            )
+
+            raw_object = (
+                connector_object[
+                    "raw_object"
+                ]
+            )
+
+            connector_metadata = (
+                connector_object.get(
+                    "connector_metadata",
+                    {},
+                )
+            )
+
+            if not isinstance(
+                source_object_type,
+                str,
+            ):
+
+                raise TypeError(
+                    "Translator stage received invalid Microsoft Graph "
+                    "source_object_type. Expected a string."
+                )
+
+            if not isinstance(
+                raw_object,
+                Mapping,
+            ):
+
+                raise TypeError(
+                    "Translator stage received invalid Microsoft Graph "
+                    "raw_object. Expected a mapping."
+                )
+
+            if not isinstance(
+                connector_metadata,
+                Mapping,
+            ):
+
+                raise TypeError(
+                    "Translator stage received invalid Microsoft Graph "
+                    "connector_metadata. Expected a mapping."
+                )
+
+        return raw_data
+
+    # ========================================================================
+    # Record Translation
+    # ========================================================================
+
+    def _translate_record(
+        self,
+        source_name,
+        source_object_type,
+        raw_object,
+        connector_metadata,
+    ):
         """
         Translate one Microsoft Graph object into a TranslatorRecord.
-
-        Parameters
-        ----------
-        source_name : str
-            Source of Truth that produced the object.
-
-        raw_object : dict
-            Individual raw Microsoft Graph object.
-
-        Returns
-        -------
-        TranslatorRecord
-            AlphaOmega canonical synchronization record.
-
-        Raises
-        ------
-        UnsupportedObjectTypeError
-            If the Microsoft Graph object cannot be mapped to an
-            AlphaOmega canonical object type.
         """
 
-        canonical_object_type = get_canonical_object_type(
-            source_object_type
+        canonical_object_type = self._get_object_type(
+            source_object_type=(
+                source_object_type
+            ),
+            raw_object=(
+                raw_object
+            ),
         )
 
         if canonical_object_type is None:
+
             raise UnsupportedObjectTypeError(
                 stage="Translator",
                 source_name=source_name,
                 object_type=source_object_type,
-                object_id=raw_object.get("id"),
+                object_id=raw_object.get(
+                    "id"
+                ),
                 object_name=(
-                    raw_object.get("displayName")
-                    or raw_object.get("name")
+                    raw_object.get(
+                        "displayName"
+                    )
+                    or raw_object.get(
+                        "name"
+                    )
+                    or raw_object.get(
+                        "title"
+                    )
                 ),
             )
 
         record = TranslatorRecord()
 
-        record.source_name = source_name
-        record.object_type = canonical_object_type
+        record.source_name = (
+            source_name
+        )
 
-        for source_field, canonical_field in GRAPH_FIELD_MAPPING.items():
+        record.object_type = (
+            canonical_object_type
+        )
+
+        # --------------------------------------------------------------------
+        # Canonical Graph field mapping
+        # --------------------------------------------------------------------
+
+        for (
+            source_field,
+            canonical_field,
+        ) in GRAPH_FIELD_MAPPING.items():
 
             value = get_nested_value(
                 raw_object,
@@ -193,18 +301,25 @@ class GraphTranslator(BaseTranslator):
             )
 
             if value is None:
+
                 continue
 
-            #
-            # Some Microsoft Graph object types use "displayName"
-            # while others use "name". Both map to AlphaOmega's
-            # canonical "name" field.
-            #
             if (
                 canonical_field == "name"
                 and record.name is not None
             ):
+
                 continue
+
+            # --------------------------------------------------------------------
+            # Canonical Name Normalization
+            # --------------------------------------------------------------------
+
+            if canonical_field == "name":
+
+                value = str(
+                    value
+                ).strip()
 
             setattr(
                 record,
@@ -212,54 +327,165 @@ class GraphTranslator(BaseTranslator):
                 value,
             )
 
+        # --------------------------------------------------------------------
+        # OneNote blank-page normalization
+        # --------------------------------------------------------------------
+
+        if (
+            source_object_type == "page"
+            and (
+                record.name is None
+                or not str(
+                    record.name
+                ).strip()
+            )
+        ):
+
+            record.name = "Untitled"
+
+        # --------------------------------------------------------------------
+        # Connector-proven hierarchy
+        # --------------------------------------------------------------------
+
+        #
+        # Connector-derived hierarchy overrides raw Graph hierarchy when
+        # Connector has proven a more specific relationship.
+        #
+        # Example:
+        #
+        # Graph:
+        #     Blueprints -> Minecraft section
+        #
+        # Connector page-level hierarchy:
+        #     Blueprints -> My World Realms page
+        #
+        if (
+            "source_parent_object_id"
+            in connector_metadata
+        ):
+
+            record.source_parent_object_id = (
+                connector_metadata.get(
+                    "source_parent_object_id"
+                )
+            )
+
+        if (
+            "source_path"
+            in connector_metadata
+        ):
+
+            record.source_path = (
+                connector_metadata.get(
+                    "source_path"
+                )
+            )
+
+        # --------------------------------------------------------------------
+        # Source metadata preservation
+        # --------------------------------------------------------------------
+
         record.metadata = {
             key: value
-            for key, value in raw_object.items()
-            if key not in RESERVED_GRAPH_FIELDS
+            for key, value
+            in raw_object.items()
+            if key
+            not in RESERVED_GRAPH_FIELDS
         }
 
+        if connector_metadata:
+
+            record.metadata[
+                "connector_hierarchy"
+            ] = dict(
+                connector_metadata
+            )
+
         return record
+
+    # ========================================================================
+    # Object Type Translation
+    # ========================================================================
+
+    def _get_object_type(
+        self,
+        source_object_type,
+        raw_object,
+    ):
+        """
+        Determine the AlphaOmega canonical object type.
+
+        Microsoft Graph uses driveItem for both files and folders.
+        Folder-faceted driveItems therefore become CONTAINER.
+        """
+
+        if (
+            source_object_type
+            == "driveItem"
+            and "folder"
+            in raw_object
+        ):
+
+            return CONTAINER
+
+        return get_canonical_object_type(
+            source_object_type
+        )
+
+    # ========================================================================
+    # Record-Level Error Handling
+    # ========================================================================
 
     def _build_record_error(
         self,
         source_name,
+        source_object_type,
         raw_object,
         error,
     ):
         """
-        Build the diagnostic record for a record-level exception.
-
-        Parameters
-        ----------
-        source_name : str
-            Source of Truth.
-
-        raw_object : dict
-            Source object that failed translation.
-
-        error : Exception
-            Exception raised while processing the object.
-
-        Returns
-        -------
-        dict
-            Structured diagnostic information for later reporting
-            and persistence by the synchronization orchestrator.
+        Build diagnostic information for a record-level Translator error.
         """
 
         return {
-            "stage": "Translator",
-            "source": source_name,
-            "object_id": raw_object.get("id"),
-            "object_name": (
-                raw_object.get("displayName")
-                or raw_object.get("name")
-            ),
-            "object_type": raw_object.get("@odata.type"),
-            "exception_type": error.__class__.__name__,
-            "failure_reason": str(error),
-            "recommended_action": (
-                "Review the Microsoft Graph object type and add the "
-                "required mapping to graph_translator_mappings.py."
-            ),
+            "stage":
+                "Translator",
+
+            "source":
+                source_name,
+
+            "object_id":
+                raw_object.get(
+                    "id"
+                ),
+
+            "object_name":
+                (
+                    raw_object.get(
+                        "displayName"
+                    )
+                    or raw_object.get(
+                        "name"
+                    )
+                    or raw_object.get(
+                        "title"
+                    )
+                    or "Untitled"
+                ),
+
+            "object_type":
+                source_object_type,
+
+            "exception_type":
+                error.__class__.__name__,
+
+            "failure_reason":
+                str(error),
+
+            "recommended_action":
+                (
+                    "Review the Microsoft Graph object type and "
+                    "add or correct the required Graph translation "
+                    "mapping."
+                ),
         }
