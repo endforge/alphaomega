@@ -1,0 +1,75 @@
+##############################################################################################################################
+This baseline artifact represents a successful completion of the Sample Pipeline test for CONNECTOR - TRANSLATOR - DISCOVERY.
+This is the baseline which will be used to compare against all future testing.
+NEW has now been proven with real Microsoft Graph data through the complete Connector → Translator → Discovery chain: 51/51 OneDrive and 44/44 OneNote, zero record errors.
+UNCHANGED and MODIFIED have already been validated within Discovery using synthetic controlled data. We know the decision logic works in isolation.
+The existing full-source baselines prove Connector → Translator at scale: 84,604 OneDrive objects and 1,689 OneNote objects with zero record errors.
+Last successful test run: 08.18.2026 @ 1710 hours.
+##############################################################################################################################
+
+PS C:\Users\david\onedrive\AlphaOmega> python -m scripts.code_testing.test_graph_discovery_pipeline_sample
+
+================================================================================
+ALPHAOMEGA CONNECTOR -> TRANSLATOR -> DISCOVERY SAMPLE END-TO-END TEST
+================================================================================
+
+Establishing authenticated AlphaOmega database connection...
+Authenticated database connection established.
+
+Retrieving OneDrive Writings sample...
+
+================================================================================
+RUNNING ONEDRIVE WRITINGS
+================================================================================
+
+Running Translator...
+Translator completed successfully.
+
+Running Discovery...
+Discovery completed successfully.
+
+================================================================================
+ONEDRIVE WRITINGS PIPELINE SUMMARY
+================================================================================
+Connector objects       : 51
+Translated records      : 51
+Translator errors       : 0
+Discovery records       : 51
+Discovery errors        : 0
+Discovery states        : {<SyncState.NEW: 'NEW'>: 51}
+Requires Extraction     : 51
+
+ONEDRIVE WRITINGS: PASS
+
+Retrieving OneNote regression sample...
+
+================================================================================
+RUNNING ONENOTE REGRESSION SAMPLE
+================================================================================
+
+Running Translator...
+Translator completed successfully.
+
+Running Discovery...
+Discovery completed successfully.
+
+================================================================================
+ONENOTE REGRESSION SAMPLE PIPELINE SUMMARY
+================================================================================
+Connector objects       : 44
+Translated records      : 44
+Translator errors       : 0
+Discovery records       : 44
+Discovery errors        : 0
+Discovery states        : {<SyncState.NEW: 'NEW'>: 44}
+Requires Extraction     : 44
+
+ONENOTE REGRESSION SAMPLE: PASS
+
+================================================================================
+FINAL RESULT
+================================================================================
+OneDrive Writings : PASS
+OneNote Regression: PASS
+
+CONNECTOR -> TRANSLATOR -> DISCOVERY END-TO-END SAMPLE TEST: PASS

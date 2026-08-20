@@ -1,0 +1,61 @@
+"""
+AlphaOmega Local Credential Provider
+
+Retrieves secrets from operating-system protected credential storage.
+
+This is the local implementation of AlphaOmega's Credential Provider.
+It may later be replaced by another provider without changing consuming
+business components.
+"""
+
+import keyring
+
+from common.security.credential_provider import CredentialProvider
+
+
+class LocalCredentialProvider(CredentialProvider):
+    """Retrieve AlphaOmega secrets from local protected credential storage."""
+
+    SERVICE_NAME = "AlphaOmega"
+
+    def get(self, credential_name: str) -> str:
+        """
+        Retrieve a credential from protected local storage.
+
+        Args:
+            credential_name: Logical AlphaOmega credential name.
+
+        Returns:
+            The stored secret.
+
+        Raises:
+            ValueError: If the credential name is invalid.
+            RuntimeError: If the credential cannot be retrieved.
+        """
+
+        if not isinstance(credential_name, str):
+            raise ValueError("Credential name must be a string.")
+
+        credential_name = credential_name.strip()
+
+        if not credential_name:
+            raise ValueError("Credential name cannot be empty.")
+
+        try:
+            credential = keyring.get_password(
+                self.SERVICE_NAME,
+                credential_name,
+            )
+        except Exception as error:
+            # Do not expose provider-generated exception details because
+            # provider messages cannot be assumed safe for logging.
+            raise RuntimeError(
+                f"Unable to retrieve credential '{credential_name}'."
+            ) from error
+
+        if credential is None:
+            raise RuntimeError(
+                f"Credential '{credential_name}' was not found."
+            )
+
+        return credential

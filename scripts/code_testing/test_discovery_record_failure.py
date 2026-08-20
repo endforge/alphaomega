@@ -1,0 +1,258 @@
+"""
+File: test_discovery_record_failure.py
+
+Purpose:
+    Verifies Discovery record-level exception handling.
+
+Test:
+    One controlled DiscoveryRecordError must:
+        1. Fail only the affected record.
+        2. Be recorded in DiscoverySection.record_errors.
+        3. Allow subsequent records to continue processing.
+        4. Allow Discovery to complete successfully.
+"""
+
+from datetime import datetime, timezone
+
+from common.security.local_credential_provider import (
+    LocalCredentialProvider,
+)
+
+from scripts.database.database_connection import DatabaseConnection
+from scripts.database.source_repository import SourceRepository
+from scripts.database.knowledge_object_repository import (
+    KnowledgeObjectRepository,
+)
+
+from scripts.discovery.discovery_service import DiscoveryService
+
+from scripts.translator.translator_record import TranslatorRecord
+from scripts.translator.translator_section import TranslatorSection
+
+from scripts.sync.sync_exceptions import DiscoveryRecordError
+from scripts.sync.sync_state import SyncState
+
+
+FAILURE_OBJECT_ID = "alphaomega-discovery-record-failure"
+
+
+class RecordFailureDiscoveryService(DiscoveryService):
+    """
+    Test-only DiscoveryService that injects one controlled
+    DiscoveryRecordError.
+
+    All other records execute through the real Discovery logic.
+    """
+
+    def _discover_record(
+        self,
+        translator_record,
+        source_ids,
+    ):
+        if (
+            translator_record.source_object_id
+            == FAILURE_OBJECT_ID
+        ):
+            raise DiscoveryRecordError(
+                "Simulated Discovery record-level failure."
+            )
+
+        return super()._discover_record(
+            translator_record=translator_record,
+            source_ids=source_ids,
+        )
+
+
+def build_record(
+    source_object_id,
+    name,
+):
+    """
+    Build a controlled OneNote TranslatorRecord.
+    """
+
+    record = TranslatorRecord()
+
+    record.source_name = "OneNote"
+    record.source_object_id = source_object_id
+    record.source_parent_object_id = "test-parent"
+    record.name = name
+    record.source_modified_at = datetime(
+        2026,
+        8,
+        18,
+        14,
+        0,
+        tzinfo=timezone.utc,
+    )
+
+    return record
+
+
+def main():
+    print("Testing Discovery record-level failure handling...")
+
+    # ------------------------------------------------------------------
+    # Database infrastructure
+    # ------------------------------------------------------------------
+
+    credential_provider = LocalCredentialProvider()
+
+    database_connection = DatabaseConnection(
+        credential_provider
+    )
+
+    client = database_connection.connect()
+
+    source_repository = SourceRepository(
+        client
+    )
+
+    knowledge_object_repository = KnowledgeObjectRepository(
+        client
+    )
+
+    discovery_service = RecordFailureDiscoveryService(
+        source_repository=source_repository,
+        knowledge_object_repository=knowledge_object_repository,
+    )
+
+    # ------------------------------------------------------------------
+    # Controlled records
+    # ------------------------------------------------------------------
+    #
+    # Record 1 should succeed.
+    # Record 2 should raise DiscoveryRecordError.
+    # Record 3 should still execute successfully.
+    #
+
+    first_record = build_record(
+        source_object_id="alphaomega-discovery-record-before",
+        name="Discovery Record Before Failure",
+    )
+
+    failing_record = build_record(
+        source_object_id=FAILURE_OBJECT_ID,
+        name="Discovery Record Failure",
+    )
+
+    third_record = build_record(
+        source_object_id="alphaomega-discovery-record-after",
+        name="Discovery Record After Failure",
+    )
+
+    translator_section = TranslatorSection()
+
+    translator_section.translated_records.extend(
+        [
+            first_record,
+            failing_record,
+            third_record,
+        ]
+    )
+
+    translator_section.translation_succeeded = True
+    translator_section.lock()
+
+    # ------------------------------------------------------------------
+    # Discovery
+    # ------------------------------------------------------------------
+
+    discovery_section = discovery_service.run(
+        translator_section
+    )
+
+    # ------------------------------------------------------------------
+    # Stage completion validation
+    # ------------------------------------------------------------------
+
+    if discovery_section.discovery_succeeded is not True:
+        raise RuntimeError(
+            "Discovery did not complete after a record-level failure."
+        )
+
+    if not discovery_section.is_locked:
+        raise RuntimeError(
+            "DiscoverySection was not locked after completion."
+        )
+
+    # ------------------------------------------------------------------
+    # Successful record validation
+    # ------------------------------------------------------------------
+
+    if len(discovery_section.discovery_records) != 2:
+        raise RuntimeError(
+            "Discovery did not return exactly two successful records. "
+            f"Actual: {len(discovery_section.discovery_records)}."
+        )
+
+    first_result = discovery_section.discovery_records[0]
+    third_result = discovery_section.discovery_records[1]
+
+    if first_result.sync_state != SyncState.NEW:
+        raise RuntimeError(
+            "Record before failure did not complete successfully."
+        )
+
+    if third_result.sync_state != SyncState.NEW:
+        raise RuntimeError(
+            "Record after failure did not continue successfully."
+        )
+
+    print(
+        "Records before and after failure processed successfully."
+    )
+
+    # ------------------------------------------------------------------
+    # Record error validation
+    # ------------------------------------------------------------------
+
+    if len(discovery_section.record_errors) != 1:
+        raise RuntimeError(
+            "Discovery did not record exactly one record-level error. "
+            f"Actual: {len(discovery_section.record_errors)}."
+        )
+
+    error = discovery_section.record_errors[0]
+
+    if error["stage"] != "Discovery":
+        raise RuntimeError(
+            "Record error contains an unexpected stage."
+        )
+
+    if error["object_id"] != FAILURE_OBJECT_ID:
+        raise RuntimeError(
+            "Record error identifies the wrong source object."
+        )
+
+    if (
+        error["exception_type"]
+        != "DiscoveryRecordError"
+    ):
+        raise RuntimeError(
+            "Record error contains an unexpected exception type."
+        )
+
+    if (
+        error["failure_reason"]
+        != "Simulated Discovery record-level failure."
+    ):
+        raise RuntimeError(
+            "Record error contains an unexpected failure reason."
+        )
+
+    print(
+        "Discovery record-level error captured correctly."
+    )
+
+    print(
+        "Discovery continued processing after the failed record."
+    )
+
+    print(
+        "Discovery record-level failure test PASSED."
+    )
+
+
+if __name__ == "__main__":
+    main()

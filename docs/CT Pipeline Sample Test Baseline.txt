@@ -1,8 +1,8 @@
-###########################################################################################
-This baseline artifact represents a successful completion of the Sample Pipeline test.
+###################################################################################################################
+This baseline artifact represents a successful completion of the Sample Pipeline test for CONNECTOR - TRANSLATOR.
 This is the baseline which will be used to compare against all future testing.
 Last successful test run: 08.14.2026 @ 1230 hours.
-###########################################################################################
+###################################################################################################################
 
 
 

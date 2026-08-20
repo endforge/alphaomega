@@ -34,6 +34,15 @@ class GraphTranslator(BaseTranslator):
     """
 
     # ========================================================================
+    # Canonical Source Names
+    # ========================================================================
+
+    CANONICAL_SOURCE_NAMES = {
+        "onedrive": "OneDrive",
+        "onenote": "OneNote",
+    }
+
+    # ========================================================================
     # Public Interface
     # ========================================================================
 
@@ -278,8 +287,15 @@ class GraphTranslator(BaseTranslator):
 
         record = TranslatorRecord()
 
+        # --------------------------------------------------------------------
+        # Canonical Source Name
+        # --------------------------------------------------------------------
+
         record.source_name = (
-            source_name
+            self.CANONICAL_SOURCE_NAMES.get(
+                source_name,
+                source_name,
+            )
         )
 
         record.object_type = (
@@ -311,9 +327,9 @@ class GraphTranslator(BaseTranslator):
 
                 continue
 
-            # --------------------------------------------------------------------
+            # ----------------------------------------------------------------
             # Canonical Name Normalization
-            # --------------------------------------------------------------------
+            # ----------------------------------------------------------------
 
             if canonical_field == "name":
 

@@ -155,6 +155,13 @@ class DiscoveryError(StageError):
 
     pass
 
+class DiscoveryRecordError(RecordError):
+    """
+    Raised when Discovery cannot evaluate one source object
+    but can safely continue processing remaining records.
+    """
+
+    pass
 
 # ============================================================================
 # Extraction Exceptions
@@ -164,6 +171,15 @@ class DiscoveryError(StageError):
 class ExtractionError(StageError):
     """
     Base exception for Extraction stage failures.
+    """
+
+    pass
+
+
+class ExtractionRecordError(RecordError):
+    """
+    Raised when Extraction cannot process one source object
+    but can safely continue processing remaining records.
     """
 
     pass
