@@ -16,15 +16,23 @@ class TranslatorRecord:
     """
     Represents one translated synchronization object.
 
-    This record is mutable while owned by the Translator stage.
-    After being added to a locked TranslatorSection, it becomes
-    immutable as part of that section.
+    The correlation_id is orchestration-owned execution metadata.
+    Translator propagates it but does not generate, modify, or
+    interpret it.
+
+    Translator-owned fields remain separate from orchestration
+    correlation identity.
     """
 
     def __init__(self):
         """
         Initialize an empty TranslatorRecord.
         """
+
+        #
+        # Orchestration correlation identity
+        #
+        self.correlation_id = None
 
         #
         # Stable source identity

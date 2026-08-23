@@ -19,9 +19,13 @@ Extraction does NOT:
     - Enumerate Sources of Truth.
     - Translate source metadata.
     - Determine synchronization state.
-    - Correlate records across synchronization stages.
+    - Generate, modify, or interpret orchestration correlation identity.
     - Persist Knowledge Objects.
     - Perform AI interpretation or enrichment.
+
+Correlation identity is assigned by Synchronization Orchestration.
+Extraction only propagates that identity through its successful
+and record-level failure outputs.
 """
 
 from datetime import datetime, timezone
@@ -130,6 +134,11 @@ class ExtractionService:
                 except ExtractionRecordError as error:
                     extraction_section.record_errors.append(
                         {
+                            "correlation_id": getattr(
+                                extraction_input,
+                                "correlation_id",
+                                None,
+                            ),
                             "source_object_id": getattr(
                                 extraction_input,
                                 "source_object_id",
@@ -159,6 +168,10 @@ class ExtractionService:
     ):
         """
         Extract canonical knowledge for one eligible source object.
+
+        Correlation identity is propagated from the
+        orchestration-supplied input. Extraction does not generate,
+        modify, or interpret the identifier.
 
         Raises:
             ExtractionRecordError:
@@ -241,6 +254,18 @@ class ExtractionService:
 
             extraction_record = ExtractionRecord()
 
+            #
+            # Orchestration correlation identity
+            #
+            extraction_record.correlation_id = getattr(
+                extraction_input,
+                "correlation_id",
+                None,
+            )
+
+            #
+            # Extraction-owned canonical knowledge
+            #
             extraction_record.canonical_content = (
                 canonical_content
             )

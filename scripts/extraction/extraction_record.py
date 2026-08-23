@@ -11,6 +11,10 @@ class ExtractionRecord:
     """
     Stores Extraction-owned canonical knowledge for one object.
 
+    The correlation_id is orchestration-owned execution metadata.
+    Extraction propagates it but does not generate, modify, or
+    interpret it.
+
     Translator-owned and Discovery-owned information remains in their
     respective records. Extraction does not copy, modify, or reinterpret
     upstream fields.
@@ -20,6 +24,11 @@ class ExtractionRecord:
         """
         Initialize an empty ExtractionRecord.
         """
+
+        #
+        # Orchestration correlation identity
+        #
+        self.correlation_id = None
 
         #
         # Canonical knowledge

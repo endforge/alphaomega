@@ -2,17 +2,21 @@
 File: test_discovery_record_failure.py
 
 Purpose:
-    Verifies Discovery record-level exception handling.
+    Verifies Discovery record-level exception handling and
+    orchestration correlation preservation.
 
 Test:
     One controlled DiscoveryRecordError must:
         1. Fail only the affected record.
         2. Be recorded in DiscoverySection.record_errors.
-        3. Allow subsequent records to continue processing.
-        4. Allow Discovery to complete successfully.
+        3. Preserve the failed record's correlation UUID.
+        4. Allow subsequent records to continue processing.
+        5. Preserve correlation UUIDs for successful records.
+        6. Allow Discovery to complete successfully.
 """
 
 from datetime import datetime, timezone
+from uuid import uuid4
 
 from common.security.local_credential_provider import (
     LocalCredentialProvider,
@@ -69,9 +73,15 @@ def build_record(
 ):
     """
     Build a controlled OneNote TranslatorRecord.
+
+    Each record receives a unique orchestration correlation UUID.
     """
 
     record = TranslatorRecord()
+
+    record.correlation_id = str(
+        uuid4()
+    )
 
     record.source_name = "OneNote"
     record.source_object_id = source_object_id
@@ -199,8 +209,43 @@ def main():
             "Record after failure did not continue successfully."
         )
 
+    # ------------------------------------------------------------------
+    # Successful correlation validation
+    # ------------------------------------------------------------------
+
+    if (
+        first_result.correlation_id
+        != first_record.correlation_id
+    ):
+        raise RuntimeError(
+            "Record before failure did not preserve its "
+            "correlation identity."
+        )
+
+    if (
+        third_result.correlation_id
+        != third_record.correlation_id
+    ):
+        raise RuntimeError(
+            "Record after failure did not preserve its "
+            "correlation identity."
+        )
+
+    if (
+        first_result.correlation_id
+        == third_result.correlation_id
+    ):
+        raise RuntimeError(
+            "Successful Discovery records unexpectedly share "
+            "the same correlation identity."
+        )
+
     print(
         "Records before and after failure processed successfully."
+    )
+
+    print(
+        "Successful records preserved correlation identity."
     )
 
     # ------------------------------------------------------------------
@@ -241,8 +286,42 @@ def main():
             "Record error contains an unexpected failure reason."
         )
 
+    # ------------------------------------------------------------------
+    # Failed correlation validation
+    # ------------------------------------------------------------------
+
+    if "correlation_id" not in error:
+        raise RuntimeError(
+            "Discovery record-level error is missing "
+            "correlation identity."
+        )
+
+    if (
+        error["correlation_id"]
+        != failing_record.correlation_id
+    ):
+        raise RuntimeError(
+            "Discovery record-level error did not preserve "
+            "the failed record's correlation identity. "
+            f"Expected: {failing_record.correlation_id!r}. "
+            f"Actual: {error['correlation_id']!r}."
+        )
+
+    if error["correlation_id"] in {
+        first_record.correlation_id,
+        third_record.correlation_id,
+    }:
+        raise RuntimeError(
+            "Failed record correlation identity was incorrectly "
+            "associated with a successful record."
+        )
+
     print(
         "Discovery record-level error captured correctly."
+    )
+
+    print(
+        "Failed record preserved correlation identity."
     )
 
     print(

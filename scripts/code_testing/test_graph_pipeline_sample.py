@@ -2,8 +2,8 @@
 File: test_graph_pipeline_sample.py
 
 Purpose:
-    Deterministic Connector -> Translator regression test using small,
-    known Microsoft Graph datasets.
+    Deterministic Connector -> Synchronization Correlation -> Translator
+    regression test using small, known Microsoft Graph datasets.
 
 OneDrive target:
     Writings and every descendant beneath Writings.
@@ -27,6 +27,12 @@ The OneNote targets deliberately exercise multiple hierarchy patterns:
 
 The test validates:
     - Retrieval completeness within the selected test scope.
+    - ConnectorSection remains locked.
+    - Connector raw objects are not modified by Synchronization.
+    - Every Connector object receives one correlation UUID.
+    - Correlation UUIDs are valid.
+    - Correlation UUIDs are unique within the batch.
+    - TranslatorRecord preserves its assigned correlation UUID.
     - Names.
     - Canonical object types.
     - Source object IDs.
@@ -41,12 +47,16 @@ The test validates:
 
 from collections import Counter
 from pprint import pprint
+from uuid import UUID
 
 from scripts.connectors.ms_graph.graph_connector import (
     GraphConnector,
 )
 from scripts.connectors.connector_section import (
     ConnectorSection,
+)
+from scripts.sync.sync_translation_input import (
+    TranslationInput,
 )
 from scripts.translator.graph_translator import (
     GraphTranslator,
@@ -71,7 +81,7 @@ def build_connector_section(
     connector_objects,
 ):
     """
-    Build a ConnectorSection for Translator testing.
+    Build a ConnectorSection for deterministic testing.
     """
 
     section = ConnectorSection(
@@ -324,9 +334,6 @@ def add_notebook(
     """
     Add a notebook and selected section hierarchy using the same
     production Connector hierarchy functions.
-
-    only_section_name limits this deterministic test to a known small
-    section when supplied.
     """
 
     notebook_id = (
@@ -410,12 +417,6 @@ def add_notebook(
             ),
         )
 
-    #
-    # Section groups are retained when the entire notebook is requested.
-    # The two current regression targets are direct notebook sections,
-    # so section groups are not needed when only_section_name is supplied.
-    #
-
     if only_section_name is None:
 
         for section_group in notebook.get(
@@ -446,14 +447,7 @@ def get_onenote_sample(
     connector,
 ):
     """
-    Retrieve two known OneNote regression datasets.
-
-    1. Games -> Minecraft
-       Tests normal level 0 -> level 1 hierarchy.
-
-    2. Mimic's Tavern -> Homebrew
-       Tests the known level 0 -> level 2 hierarchy involving
-       Selune Armor -> Armor.
+    Retrieve the two known OneNote regression datasets.
     """
 
     raw_objects = []
@@ -462,10 +456,6 @@ def get_onenote_sample(
 
     section_ids = set()
     section_group_ids = set()
-
-    # ------------------------------------------------------------------------
-    # Games -> Minecraft
-    # ------------------------------------------------------------------------
 
     games_notebook = (
         get_onenote_notebook(
@@ -488,10 +478,6 @@ def get_onenote_sample(
         ),
     )
 
-    # ------------------------------------------------------------------------
-    # Mimic's Tavern -> Homebrew
-    # ------------------------------------------------------------------------
-
     mimics_notebook = (
         get_onenote_notebook(
             connector,
@@ -513,10 +499,6 @@ def get_onenote_sample(
         ),
     )
 
-    # ------------------------------------------------------------------------
-    # Retrieve pages using production hierarchy logic
-    # ------------------------------------------------------------------------
-
     for section_context in sections:
 
         connector._enumerate_onenote_section_pages(
@@ -535,6 +517,307 @@ def get_onenote_sample(
 
 
 # ============================================================================
+# Correlation Validation
+# ============================================================================
+
+def validate_correlation_input(
+    connector_section,
+    connector_snapshot,
+    translation_input,
+):
+    """
+    Validate the Synchronization correlation boundary.
+    """
+
+    failures = []
+
+    # ------------------------------------------------------------------------
+    # ConnectorSection must remain locked
+    # ------------------------------------------------------------------------
+
+    if connector_section.is_locked is not True:
+
+        failures.append(
+            {
+                "object":
+                    connector_section.source_name,
+
+                "field":
+                    "connector_section_locked",
+
+                "expected":
+                    True,
+
+                "actual":
+                    connector_section.is_locked,
+            }
+        )
+
+    # ------------------------------------------------------------------------
+    # Connector raw objects must remain unchanged
+    # ------------------------------------------------------------------------
+
+    if (
+        list(
+            connector_section.raw_objects
+        )
+        != connector_snapshot
+    ):
+
+        failures.append(
+            {
+                "object":
+                    connector_section.source_name,
+
+                "field":
+                    "connector_raw_objects_unchanged",
+
+                "expected":
+                    "unchanged",
+
+                "actual":
+                    "modified",
+            }
+        )
+
+    # ------------------------------------------------------------------------
+    # Record count must remain one-for-one
+    # ------------------------------------------------------------------------
+
+    if (
+        len(
+            translation_input.raw_objects
+        )
+        != len(
+            connector_section.raw_objects
+        )
+    ):
+
+        failures.append(
+            {
+                "object":
+                    connector_section.source_name,
+
+                "field":
+                    "correlation_record_count",
+
+                "expected":
+                    len(
+                        connector_section.raw_objects
+                    ),
+
+                "actual":
+                    len(
+                        translation_input.raw_objects
+                    ),
+            }
+        )
+
+    correlation_ids = []
+
+    # ------------------------------------------------------------------------
+    # Validate every correlated object
+    # ------------------------------------------------------------------------
+
+    for index, correlated_object in enumerate(
+        translation_input.raw_objects
+    ):
+
+        correlation_id = (
+            correlated_object.get(
+                "correlation_id"
+            )
+        )
+
+        correlation_ids.append(
+            correlation_id
+        )
+
+        # --------------------------------------------------------------------
+        # UUID must exist and be valid
+        # --------------------------------------------------------------------
+
+        try:
+
+            parsed_uuid = UUID(
+                str(
+                    correlation_id
+                )
+            )
+
+            if str(
+                parsed_uuid
+            ) != str(
+                correlation_id
+            ):
+
+                raise ValueError(
+                    "UUID string is not canonical."
+                )
+
+        except Exception:
+
+            failures.append(
+                {
+                    "object":
+                        index,
+
+                    "field":
+                        "correlation_id",
+
+                    "expected":
+                        "valid canonical UUID",
+
+                    "actual":
+                        correlation_id,
+                }
+            )
+
+        # --------------------------------------------------------------------
+        # Connector source information must be preserved
+        # --------------------------------------------------------------------
+
+        if (
+            index
+            < len(
+                connector_section.raw_objects
+            )
+        ):
+
+            connector_object = (
+                connector_section.raw_objects[
+                    index
+                ]
+            )
+
+            if (
+                correlated_object.get(
+                    "source_object_type"
+                )
+                != connector_object.get(
+                    "source_object_type"
+                )
+            ):
+
+                failures.append(
+                    {
+                        "object":
+                            index,
+
+                        "field":
+                            "source_object_type_preserved",
+
+                        "expected":
+                            connector_object.get(
+                                "source_object_type"
+                            ),
+
+                        "actual":
+                            correlated_object.get(
+                                "source_object_type"
+                            ),
+                    }
+                )
+
+            if (
+                correlated_object.get(
+                    "raw_object"
+                )
+                != connector_object.get(
+                    "raw_object"
+                )
+            ):
+
+                failures.append(
+                    {
+                        "object":
+                            index,
+
+                        "field":
+                            "raw_object_preserved",
+
+                        "expected":
+                            "Connector raw_object",
+
+                        "actual":
+                            "different raw_object",
+                    }
+                )
+
+            if (
+                correlated_object.get(
+                    "connector_metadata",
+                    {},
+                )
+                != connector_object.get(
+                    "connector_metadata",
+                    {},
+                )
+            ):
+
+                failures.append(
+                    {
+                        "object":
+                            index,
+
+                        "field":
+                            "connector_metadata_preserved",
+
+                        "expected":
+                            connector_object.get(
+                                "connector_metadata",
+                                {},
+                            ),
+
+                        "actual":
+                            correlated_object.get(
+                                "connector_metadata",
+                                {},
+                            ),
+                    }
+                )
+
+    # ------------------------------------------------------------------------
+    # UUIDs must be unique within this synchronization batch
+    # ------------------------------------------------------------------------
+
+    if (
+        len(
+            correlation_ids
+        )
+        != len(
+            set(
+                correlation_ids
+            )
+        )
+    ):
+
+        failures.append(
+            {
+                "object":
+                    connector_section.source_name,
+
+                "field":
+                    "correlation_id_uniqueness",
+
+                "expected":
+                    len(
+                        correlation_ids
+                    ),
+
+                "actual":
+                    len(
+                        set(
+                            correlation_ids
+                        )
+                    ),
+            }
+        )
+
+    return failures
+
+
+# ============================================================================
 # General Pipeline Validation
 # ============================================================================
 
@@ -543,19 +826,63 @@ def validate_pipeline(
     connector_section,
 ):
     """
-    Translate every Connector object and compare canonical values against
-    the raw source data and Connector-derived hierarchy.
+    Apply synchronization correlation, translate every Connector object,
+    and validate canonical values and correlation identity.
     """
+
+    connector_snapshot = list(
+        connector_section.raw_objects
+    )
+
+    translation_input = TranslationInput(
+        connector_section
+    )
+
+    failures = validate_correlation_input(
+        connector_section=(
+            connector_section
+        ),
+        connector_snapshot=(
+            connector_snapshot
+        ),
+        translation_input=(
+            translation_input
+        ),
+    )
 
     translator = GraphTranslator()
 
     translator_section = (
         translator.run(
-            connector_section
+            translation_input
         )
     )
 
-    failures = []
+    # ------------------------------------------------------------------------
+    # Build correlation lookup before source-object lookup.
+    # ------------------------------------------------------------------------
+
+    correlation_by_source_id = {}
+
+    for correlated_object in (
+        translation_input.raw_objects
+    ):
+
+        raw_object = (
+            correlated_object[
+                "raw_object"
+            ]
+        )
+
+        object_id = raw_object.get(
+            "id"
+        )
+
+        correlation_by_source_id[
+            object_id
+        ] = correlated_object[
+            "correlation_id"
+        ]
 
     translated_by_id = {
         record.source_object_id:
@@ -669,7 +996,19 @@ def validate_pipeline(
 
             continue
 
+        expected_correlation_id = (
+            correlation_by_source_id.get(
+                object_id
+            )
+        )
+
         comparisons = {
+            "correlation_id":
+                (
+                    expected_correlation_id,
+                    record.correlation_id,
+                ),
+
             "name":
                 (
                     name,
@@ -807,9 +1146,6 @@ def get_unique_record(
 ):
     """
     Return exactly one translated record having the requested name.
-
-    Used only for known deterministic regression objects whose names are
-    unique within the selected sample.
     """
 
     matches = [
@@ -849,8 +1185,6 @@ def validate_games_hierarchy(
 ):
     """
     Validate the known Games -> Minecraft hierarchy.
-
-    This proves the normal contiguous level 0 -> level 1 case.
     """
 
     failures = []
@@ -953,14 +1287,6 @@ def validate_non_contiguous_hierarchy(
         Homebrew
             Selune Armor       level 0
                 Armor          level 2
-
-    This is the regression case that exposed the original hierarchy bug.
-
-    The old hierarchy algorithm required level - 1 to exist and therefore
-    could not resolve Armor.
-
-    The corrected algorithm must identify Selune Armor as Armor's parent
-    because it is the nearest preceding page at a lower hierarchy level.
     """
 
     failures = []
@@ -995,10 +1321,6 @@ def validate_non_contiguous_hierarchy(
 
         return failures
 
-    # ------------------------------------------------------------------------
-    # Parent relationship
-    # ------------------------------------------------------------------------
-
     if (
         child_page.source_parent_object_id
         != parent_page.source_object_id
@@ -1019,10 +1341,6 @@ def validate_non_contiguous_hierarchy(
                     child_page.source_parent_object_id,
             }
         )
-
-    # ------------------------------------------------------------------------
-    # Source path
-    # ------------------------------------------------------------------------
 
     expected_path = (
         "Mimic's Tavern/"
@@ -1050,11 +1368,6 @@ def validate_non_contiguous_hierarchy(
                     child_page.source_path,
             }
         )
-
-    # ------------------------------------------------------------------------
-    # Verify the exact Graph hierarchy levels that make this a meaningful
-    # regression test.
-    # ------------------------------------------------------------------------
 
     parent_hierarchy = (
         parent_page.metadata.get(
@@ -1117,10 +1430,6 @@ def validate_non_contiguous_hierarchy(
                     child_level,
             }
         )
-
-    # ------------------------------------------------------------------------
-    # Verify source ordering.
-    # ------------------------------------------------------------------------
 
     parent_order = (
         parent_hierarchy.get(
@@ -1197,8 +1506,7 @@ def validate_untitled_pages(
     translator_section,
 ):
     """
-    Verify that the Games sample still contains valid Untitled pages and
-    that they were normalized correctly.
+    Verify blank OneNote page title normalization.
     """
 
     failures = []
@@ -1294,7 +1602,7 @@ def print_translator_output(
     translator_section,
 ):
     """
-    Print canonical Translator fields needed for inspection.
+    Print canonical Translator fields and correlation identity.
     """
 
     print()
@@ -1310,6 +1618,9 @@ def print_translator_output(
 
         pprint(
             {
+                "correlation_id":
+                    record.correlation_id,
+
                 "name":
                     record.name,
 
@@ -1401,7 +1712,7 @@ def main():
     print()
     print("=" * 78)
     print(
-        "Microsoft Graph Connector -> Translator "
+        "Microsoft Graph Connector -> Correlation -> Translator "
         "Deterministic Regression Validation"
     )
     print("=" * 78)
@@ -1481,10 +1792,6 @@ def main():
             onenote_section,
         )
 
-        # --------------------------------------------------------------------
-        # Known hierarchy regression cases
-        # --------------------------------------------------------------------
-
         onenote_failures.extend(
             validate_games_hierarchy(
                 onenote_translator
@@ -1551,7 +1858,7 @@ def main():
 
         print()
         print(
-            "Connector -> Translator "
+            "Connector -> Correlation -> Translator "
             "deterministic regression validation: PASS"
         )
 
@@ -1559,7 +1866,7 @@ def main():
 
         print()
         print(
-            "Connector -> Translator "
+            "Connector -> Correlation -> Translator "
             "deterministic regression validation: FAIL"
         )
 

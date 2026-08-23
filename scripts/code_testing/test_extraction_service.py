@@ -8,7 +8,9 @@ Purpose:
 Tests:
     - OneDrive extraction flow.
     - OneNote extraction flow.
+    - Successful correlation identity propagation.
     - Record-level failure isolation.
+    - Failed-record correlation identity preservation.
     - Invalid record input handling.
     - Stage-level failure handling.
     - ExtractionSection locking.
@@ -16,6 +18,7 @@ Tests:
 
 from types import SimpleNamespace
 from unittest.mock import Mock
+from uuid import uuid4
 
 from scripts.extraction.extraction_service import (
     ExtractionService,
@@ -33,9 +36,14 @@ def build_input(
 ):
     """
     Build a simple orchestration-supplied Extraction input.
+
+    Each input receives a unique orchestration correlation UUID.
     """
 
     return SimpleNamespace(
+        correlation_id=str(
+            uuid4()
+        ),
         source_name=source_name,
         source_object_id=source_object_id,
         object_type=object_type,
@@ -47,6 +55,9 @@ def test_onedrive_extraction():
     """
     Verify OneDrive content is retrieved, extracted, hashed,
     and returned as an ExtractionRecord.
+
+    Also verify Extraction preserves the orchestration
+    correlation identity.
     """
 
     onedrive_retriever = Mock()
@@ -80,6 +91,11 @@ def test_onedrive_extraction():
     assert len(section.record_errors) == 0
 
     record = section.extraction_records[0]
+
+    assert (
+        record.correlation_id
+        == extraction_input.correlation_id
+    )
 
     assert (
         record.canonical_content
@@ -116,11 +132,18 @@ def test_onedrive_extraction():
         "PASS: OneDrive ExtractionService flow correct."
     )
 
+    print(
+        "PASS: OneDrive correlation identity preserved."
+    )
+
 
 def test_onenote_extraction():
     """
     Verify OneNote HTML retrieval is routed through
     the HTML extractor.
+
+    Also verify Extraction preserves the orchestration
+    correlation identity.
     """
 
     onenote_retriever = Mock()
@@ -156,6 +179,11 @@ def test_onenote_extraction():
     record = section.extraction_records[0]
 
     assert (
+        record.correlation_id
+        == extraction_input.correlation_id
+    )
+
+    assert (
         "OneNote content"
         in record.canonical_content
     )
@@ -171,11 +199,18 @@ def test_onenote_extraction():
         "PASS: OneNote ExtractionService flow correct."
     )
 
+    print(
+        "PASS: OneNote correlation identity preserved."
+    )
+
 
 def test_record_failure_continues_batch():
     """
     Verify one source-object failure becomes an
     ExtractionRecordError and does not stop the batch.
+
+    Also verify correlation identity remains associated
+    with the correct successful and failed records.
     """
 
     good_retriever = Mock()
@@ -223,6 +258,25 @@ def test_record_failure_continues_batch():
         ),
     ]
 
+    first_input = inputs[0]
+    failing_input = inputs[1]
+    third_input = inputs[2]
+
+    assert (
+        first_input.correlation_id
+        != failing_input.correlation_id
+    )
+
+    assert (
+        first_input.correlation_id
+        != third_input.correlation_id
+    )
+
+    assert (
+        failing_input.correlation_id
+        != third_input.correlation_id
+    )
+
     section = service.run(
         inputs
     )
@@ -230,6 +284,24 @@ def test_record_failure_continues_batch():
     assert section.extraction_succeeded is True
     assert len(section.extraction_records) == 2
     assert len(section.record_errors) == 1
+
+    first_record = section.extraction_records[0]
+    third_record = section.extraction_records[1]
+
+    assert (
+        first_record.correlation_id
+        == first_input.correlation_id
+    )
+
+    assert (
+        third_record.correlation_id
+        == third_input.correlation_id
+    )
+
+    assert (
+        first_record.correlation_id
+        != third_record.correlation_id
+    )
 
     error = section.record_errors[0]
 
@@ -248,9 +320,39 @@ def test_record_failure_continues_batch():
         in error["message"]
     )
 
+    assert (
+        "correlation_id"
+        in error
+    )
+
+    assert (
+        error["correlation_id"]
+        == failing_input.correlation_id
+    )
+
+    assert (
+        error["correlation_id"]
+        != first_record.correlation_id
+    )
+
+    assert (
+        error["correlation_id"]
+        != third_record.correlation_id
+    )
+
     print(
         "PASS: ExtractionRecordError isolated "
         "and batch continued."
+    )
+
+    print(
+        "PASS: Successful records preserved "
+        "correlation identity across failure."
+    )
+
+    print(
+        "PASS: Failed record preserved its "
+        "correlation identity."
     )
 
 
@@ -259,6 +361,9 @@ def test_missing_required_record_input():
     Verify invalid input for one source object becomes
     an ExtractionRecordError rather than terminating
     the entire stage.
+
+    Correlation identity must still be retained even
+    when another required input field is invalid.
     """
 
     service = ExtractionService()
@@ -281,6 +386,11 @@ def test_missing_required_record_input():
     error = section.record_errors[0]
 
     assert (
+        error["correlation_id"]
+        == extraction_input.correlation_id
+    )
+
+    assert (
         error["source_object_id"]
         is None
     )
@@ -298,6 +408,11 @@ def test_missing_required_record_input():
     print(
         "PASS: Invalid source-object input captured "
         "as ExtractionRecordError."
+    )
+
+    print(
+        "PASS: Invalid record retained "
+        "correlation identity."
     )
 
 
@@ -432,7 +547,8 @@ def main():
     """
 
     print(
-        "\nRunning ExtractionService exception tests...\n"
+        "\nRunning ExtractionService exception "
+        "and correlation tests...\n"
     )
 
     test_onedrive_extraction()
@@ -444,7 +560,8 @@ def main():
     test_section_locking()
 
     print(
-        "\nExtractionService exception tests PASSED.\n"
+        "\nExtractionService exception and "
+        "correlation tests PASSED.\n"
     )
 
 

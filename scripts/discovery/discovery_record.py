@@ -11,6 +11,10 @@ class DiscoveryRecord:
     """
     Stores Discovery-owned synchronization information for one object.
 
+    The correlation_id is orchestration-owned execution metadata.
+    Discovery propagates it but does not generate, modify, or
+    interpret it.
+
     Translator-owned information remains in the TranslatorRecord.
     Discovery does not copy, modify, or reinterpret upstream fields.
     """
@@ -19,6 +23,11 @@ class DiscoveryRecord:
         """
         Initialize an empty DiscoveryRecord.
         """
+
+        #
+        # Orchestration correlation identity
+        #
+        self.correlation_id = None
 
         #
         # Resolved AlphaOmega identity

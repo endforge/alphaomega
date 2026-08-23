@@ -10,6 +10,10 @@ Connector stage into AlphaOmega's canonical synchronization model.
 Microsoft-specific structure is understood only by the GraphTranslator
 and its mapping module. Downstream synchronization stages operate only
 on TranslatorRecord objects.
+
+Synchronization correlation identity is supplied by Orchestration.
+Translator propagates correlation identity but does not generate,
+modify, or interpret it.
 """
 
 from collections.abc import Mapping
@@ -46,147 +50,49 @@ class GraphTranslator(BaseTranslator):
     # Public Interface
     # ========================================================================
 
-    def run(self, connector_section):
+    def run(
+        self,
+        translation_input,
+    ):
         """
         Execute the Translator stage.
 
-        Connector objects are individually typed by Connector.
+        Translation input is supplied by Synchronization Orchestration
+        after Connector completes.
+
+        Each source object contains an orchestration-owned correlation
+        UUID plus the Connector-owned source information.
 
         Record-level errors affect only the individual source object.
         Remaining objects continue processing.
 
-        Stage-level errors propagate to the synchronization orchestrator.
+        Stage-level errors propagate to Synchronization Orchestration.
         """
 
-        translator_section = TranslatorSection()
+        if translation_input is None:
+            raise ValueError(
+                "TranslationInput is required."
+            )
 
-        connector_objects = self._get_source_objects(
-            connector_section.raw_objects
+        translator_section = (
+            TranslatorSection()
         )
 
-        for connector_object in connector_objects:
-
-            source_object_type = connector_object[
-                "source_object_type"
-            ]
-
-            raw_object = connector_object[
-                "raw_object"
-            ]
-
-            connector_metadata = (
-                connector_object.get(
-                    "connector_metadata",
-                    {},
-                )
+        connector_objects = (
+            self._get_source_objects(
+                translation_input.raw_objects
             )
+        )
 
-            try:
-
-                translator_record = self._translate_record(
-                    source_name=(
-                        connector_section.source_name
-                    ),
-                    source_object_type=(
-                        source_object_type
-                    ),
-                    raw_object=(
-                        raw_object
-                    ),
-                    connector_metadata=(
-                        connector_metadata
-                    ),
-                )
-
-                translator_section.translated_records.append(
-                    translator_record
-                )
-
-            except UnsupportedObjectTypeError as error:
-
-                translator_section.record_errors.append(
-                    self._build_record_error(
-                        source_name=(
-                            connector_section.source_name
-                        ),
-                        source_object_type=(
-                            source_object_type
-                        ),
-                        raw_object=(
-                            raw_object
-                        ),
-                        error=(
-                            error
-                        ),
-                    )
-                )
-
-        translator_section.translation_succeeded = True
-
-        translator_section.lock()
-
-        return translator_section
-
-    # ========================================================================
-    # Connector Input Validation
-    # ========================================================================
-
-    def _get_source_objects(
-        self,
-        raw_data,
-    ):
-        """
-        Validate and return Microsoft Graph objects received from Connector.
-        """
-
-        if (
-            not isinstance(
-                raw_data,
-                Sequence,
-            )
-            or isinstance(
-                raw_data,
-                (str, bytes),
-            )
+        for connector_object in (
+            connector_objects
         ):
 
-            raise TypeError(
-                "Translator stage received invalid Microsoft Graph "
-                "Connector output. Expected a sequence of Connector "
-                "objects."
+            correlation_id = (
+                connector_object[
+                    "correlation_id"
+                ]
             )
-
-        for connector_object in raw_data:
-
-            if not isinstance(
-                connector_object,
-                Mapping,
-            ):
-
-                raise TypeError(
-                    "Translator stage received invalid Microsoft Graph "
-                    "Connector object. Expected a mapping."
-                )
-
-            if (
-                "source_object_type"
-                not in connector_object
-            ):
-
-                raise TypeError(
-                    "Translator stage received Microsoft Graph "
-                    "Connector object without source_object_type."
-                )
-
-            if (
-                "raw_object"
-                not in connector_object
-            ):
-
-                raise TypeError(
-                    "Translator stage received Microsoft Graph "
-                    "Connector object without raw_object."
-                )
 
             source_object_type = (
                 connector_object[
@@ -207,14 +113,179 @@ class GraphTranslator(BaseTranslator):
                 )
             )
 
+            try:
+
+                translator_record = (
+                    self._translate_record(
+                        correlation_id=(
+                            correlation_id
+                        ),
+                        source_name=(
+                            translation_input.source_name
+                        ),
+                        source_object_type=(
+                            source_object_type
+                        ),
+                        raw_object=(
+                            raw_object
+                        ),
+                        connector_metadata=(
+                            connector_metadata
+                        ),
+                    )
+                )
+
+                translator_section.translated_records.append(
+                    translator_record
+                )
+
+            except UnsupportedObjectTypeError as error:
+
+                translator_section.record_errors.append(
+                    self._build_record_error(
+                        correlation_id=(
+                            correlation_id
+                        ),
+                        source_name=(
+                            translation_input.source_name
+                        ),
+                        source_object_type=(
+                            source_object_type
+                        ),
+                        raw_object=(
+                            raw_object
+                        ),
+                        error=(
+                            error
+                        ),
+                    )
+                )
+
+        translator_section.translation_succeeded = (
+            True
+        )
+
+        translator_section.lock()
+
+        return translator_section
+
+    # ========================================================================
+    # Translator Input Validation
+    # ========================================================================
+
+    def _get_source_objects(
+        self,
+        raw_data,
+    ):
+        """
+        Validate and return orchestration-supplied source objects.
+        """
+
+        if (
+            not isinstance(
+                raw_data,
+                Sequence,
+            )
+            or isinstance(
+                raw_data,
+                (str, bytes),
+            )
+        ):
+
+            raise TypeError(
+                "Translator stage received invalid Translator input. "
+                "Expected a sequence of source objects."
+            )
+
+        for connector_object in (
+            raw_data
+        ):
+
+            if not isinstance(
+                connector_object,
+                Mapping,
+            ):
+
+                raise TypeError(
+                    "Translator stage received invalid source object. "
+                    "Expected a mapping."
+                )
+
+            if (
+                "correlation_id"
+                not in connector_object
+            ):
+
+                raise TypeError(
+                    "Translator stage received a source object "
+                    "without correlation_id."
+                )
+
+            if (
+                "source_object_type"
+                not in connector_object
+            ):
+
+                raise TypeError(
+                    "Translator stage received a source object "
+                    "without source_object_type."
+                )
+
+            if (
+                "raw_object"
+                not in connector_object
+            ):
+
+                raise TypeError(
+                    "Translator stage received a source object "
+                    "without raw_object."
+                )
+
+            correlation_id = (
+                connector_object[
+                    "correlation_id"
+                ]
+            )
+
+            source_object_type = (
+                connector_object[
+                    "source_object_type"
+                ]
+            )
+
+            raw_object = (
+                connector_object[
+                    "raw_object"
+                ]
+            )
+
+            connector_metadata = (
+                connector_object.get(
+                    "connector_metadata",
+                    {},
+                )
+            )
+
+            if (
+                correlation_id is None
+                or not str(
+                    correlation_id
+                ).strip()
+            ):
+
+                raise TypeError(
+                    "Translator stage received an invalid "
+                    "correlation_id."
+                )
+
             if not isinstance(
                 source_object_type,
                 str,
             ):
 
                 raise TypeError(
-                    "Translator stage received invalid Microsoft Graph "
-                    "source_object_type. Expected a string."
+                    "Translator stage received invalid Microsoft "
+                    "Graph source_object_type. Expected a string."
                 )
 
             if not isinstance(
@@ -223,8 +294,8 @@ class GraphTranslator(BaseTranslator):
             ):
 
                 raise TypeError(
-                    "Translator stage received invalid Microsoft Graph "
-                    "raw_object. Expected a mapping."
+                    "Translator stage received invalid Microsoft "
+                    "Graph raw_object. Expected a mapping."
                 )
 
             if not isinstance(
@@ -233,8 +304,8 @@ class GraphTranslator(BaseTranslator):
             ):
 
                 raise TypeError(
-                    "Translator stage received invalid Microsoft Graph "
-                    "connector_metadata. Expected a mapping."
+                    "Translator stage received invalid Microsoft "
+                    "Graph connector_metadata. Expected a mapping."
                 )
 
         return raw_data
@@ -245,6 +316,7 @@ class GraphTranslator(BaseTranslator):
 
     def _translate_record(
         self,
+        correlation_id,
         source_name,
         source_object_type,
         raw_object,
@@ -254,13 +326,15 @@ class GraphTranslator(BaseTranslator):
         Translate one Microsoft Graph object into a TranslatorRecord.
         """
 
-        canonical_object_type = self._get_object_type(
-            source_object_type=(
-                source_object_type
-            ),
-            raw_object=(
-                raw_object
-            ),
+        canonical_object_type = (
+            self._get_object_type(
+                source_object_type=(
+                    source_object_type
+                ),
+                raw_object=(
+                    raw_object
+                ),
+            )
         )
 
         if canonical_object_type is None:
@@ -286,6 +360,13 @@ class GraphTranslator(BaseTranslator):
             )
 
         record = TranslatorRecord()
+
+        #
+        # Orchestration correlation identity
+        #
+        record.correlation_id = str(
+            correlation_id
+        )
 
         # --------------------------------------------------------------------
         # Canonical Source Name
@@ -317,22 +398,15 @@ class GraphTranslator(BaseTranslator):
             )
 
             if value is None:
-
                 continue
 
             if (
                 canonical_field == "name"
                 and record.name is not None
             ):
-
                 continue
 
-            # ----------------------------------------------------------------
-            # Canonical Name Normalization
-            # ----------------------------------------------------------------
-
             if canonical_field == "name":
-
                 value = str(
                     value
                 ).strip()
@@ -356,30 +430,16 @@ class GraphTranslator(BaseTranslator):
                 ).strip()
             )
         ):
-
             record.name = "Untitled"
 
         # --------------------------------------------------------------------
         # Connector-proven hierarchy
         # --------------------------------------------------------------------
 
-        #
-        # Connector-derived hierarchy overrides raw Graph hierarchy when
-        # Connector has proven a more specific relationship.
-        #
-        # Example:
-        #
-        # Graph:
-        #     Blueprints -> Minecraft section
-        #
-        # Connector page-level hierarchy:
-        #     Blueprints -> My World Realms page
-        #
         if (
             "source_parent_object_id"
             in connector_metadata
         ):
-
             record.source_parent_object_id = (
                 connector_metadata.get(
                     "source_parent_object_id"
@@ -390,7 +450,6 @@ class GraphTranslator(BaseTranslator):
             "source_path"
             in connector_metadata
         ):
-
             record.source_path = (
                 connector_metadata.get(
                     "source_path"
@@ -410,7 +469,6 @@ class GraphTranslator(BaseTranslator):
         }
 
         if connector_metadata:
-
             record.metadata[
                 "connector_hierarchy"
             ] = dict(
@@ -441,7 +499,6 @@ class GraphTranslator(BaseTranslator):
             and "folder"
             in raw_object
         ):
-
             return CONTAINER
 
         return get_canonical_object_type(
@@ -454,6 +511,7 @@ class GraphTranslator(BaseTranslator):
 
     def _build_record_error(
         self,
+        correlation_id,
         source_name,
         source_object_type,
         raw_object,
@@ -466,6 +524,11 @@ class GraphTranslator(BaseTranslator):
         return {
             "stage":
                 "Translator",
+
+            "correlation_id":
+                str(
+                    correlation_id
+                ),
 
             "source":
                 source_name,

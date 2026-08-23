@@ -150,6 +150,13 @@ class DiscoveryService:
         discovery_record = DiscoveryRecord()
 
         #
+        # Orchestration correlation identity
+        #
+        discovery_record.correlation_id = (
+            translator_record.correlation_id
+        )
+
+        #
         # NEW
         #
         if knowledge_object is None:
@@ -230,15 +237,33 @@ class DiscoveryService:
     ):
         """
         Build diagnostic information for a record-level Discovery error.
+
+        Correlation identity is propagated from the TranslatorRecord
+        so Synchronization Orchestration can associate the failure with
+        the source object throughout the synchronization run.
         """
 
         return {
             "stage": "Discovery",
+
+            "correlation_id": (
+                translator_record.correlation_id
+            ),
+
             "source": translator_record.source_name,
-            "object_id": translator_record.source_object_id,
+
+            "object_id": (
+                translator_record.source_object_id
+            ),
+
             "object_name": translator_record.name,
-            "exception_type": error.__class__.__name__,
+
+            "exception_type": (
+                error.__class__.__name__
+            ),
+
             "failure_reason": str(error),
+
             "recommended_action": (
                 "Review Source registration, repository access, "
                 "and the affected Knowledge Object."

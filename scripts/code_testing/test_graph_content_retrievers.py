@@ -4,9 +4,20 @@ File: test_graph_content_retrievers.py
 Purpose:
     Verify Microsoft Graph content retrievers without making
     live Microsoft Graph requests.
+
+The retrievers operate downstream of Translator.
+
+Where object type is required, tests therefore use AlphaOmega's
+canonical object types rather than Microsoft Graph source-native
+object types.
 """
 
 from unittest.mock import Mock, patch
+
+from common.object_types import (
+    CONTENT,
+    CONTAINER,
+)
 
 from scripts.connectors.ms_graph.onedrive_content_retriever import (
     OneDriveContentRetriever,
@@ -72,8 +83,8 @@ def test_onedrive_missing_id():
 
 def test_onenote_retrieval():
     """
-    Verify OneNote page retrieval uses the expected Graph endpoint
-    and returns raw response bytes.
+    Verify canonical OneNote CONTENT retrieval uses the expected
+    Graph page-content endpoint and returns raw response bytes.
     """
 
     retriever = OneNoteContentRetriever()
@@ -89,7 +100,7 @@ def test_onenote_retrieval():
 
         result = retriever.retrieve(
             source_object_id="page-456",
-            object_type="page",
+            object_type=CONTENT,
         )
 
     assert result == b"<html>OneNote test</html>"
@@ -99,7 +110,8 @@ def test_onenote_retrieval():
     )
 
     print(
-        "PASS: OneNote page retrieval routed correctly."
+        "PASS: OneNote canonical CONTENT retrieval "
+        "routed correctly."
     )
 
 
@@ -113,7 +125,7 @@ def test_onenote_missing_id():
     try:
         retriever.retrieve(
             source_object_id=None,
-            object_type="page",
+            object_type=CONTENT,
         )
 
         raise AssertionError(
@@ -130,32 +142,54 @@ def test_onenote_missing_id():
 
 def test_onenote_container_rejected():
     """
-    Verify OneNote containers cannot be retrieved as page content.
+    Verify canonical CONTAINER objects cannot be retrieved
+    as OneNote page content.
     """
 
     retriever = OneNoteContentRetriever()
 
-    for object_type in (
-        "notebook",
-        "sectionGroup",
-        "section",
-    ):
-        try:
-            retriever.retrieve(
-                source_object_id="container-123",
-                object_type=object_type,
-            )
+    try:
+        retriever.retrieve(
+            source_object_id="container-123",
+            object_type=CONTAINER,
+        )
 
-            raise AssertionError(
-                f"OneNote {object_type} was accepted "
-                "for content retrieval."
-            )
+        raise AssertionError(
+            "OneNote canonical CONTAINER was accepted "
+            "for content retrieval."
+        )
 
-        except ValueError:
-            pass
+    except ValueError:
+        pass
 
     print(
-        "PASS: OneNote container objects rejected."
+        "PASS: OneNote canonical CONTAINER rejected."
+    )
+
+
+def test_onenote_missing_object_type():
+    """
+    Verify OneNote retrieval rejects a missing canonical
+    object type.
+    """
+
+    retriever = OneNoteContentRetriever()
+
+    try:
+        retriever.retrieve(
+            source_object_id="page-456",
+            object_type=None,
+        )
+
+        raise AssertionError(
+            "Missing OneNote canonical object type was accepted."
+        )
+
+    except ValueError:
+        pass
+
+    print(
+        "PASS: OneNote missing canonical object type rejected."
     )
 
 
@@ -171,9 +205,11 @@ def main():
 
     test_onedrive_retrieval()
     test_onedrive_missing_id()
+
     test_onenote_retrieval()
     test_onenote_missing_id()
     test_onenote_container_rejected()
+    test_onenote_missing_object_type()
 
     print(
         "\nMicrosoft Graph content "

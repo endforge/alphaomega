@@ -115,3 +115,141 @@ class KnowledgeObjectRepository:
             )
 
         return records[0]
+
+    def create(
+        self,
+        values: Mapping[str, Any],
+    ) -> Mapping[str, Any]:
+        """
+        Create a new canonical Knowledge Object.
+
+        The database owns generation of the Knowledge Object UUID.
+
+        Args:
+            values:
+                Canonical Knowledge Object values to persist.
+
+        Returns:
+            Mapping:
+                The persisted Knowledge Object.
+
+        Raises:
+            ValueError:
+                If persistence values are missing.
+
+            RuntimeError:
+                If the Knowledge Object cannot be created or the
+                database does not return exactly one persisted row.
+        """
+
+        if values is None or not isinstance(values, Mapping):
+            raise ValueError(
+                "Knowledge Object persistence values are required."
+            )
+
+        if not values:
+            raise ValueError(
+                "Knowledge Object persistence values cannot be empty."
+            )
+
+        try:
+            response = (
+                self._client
+                .table(self.TABLE_NAME)
+                .insert(dict(values))
+                .execute()
+            )
+        except Exception as error:
+            raise RuntimeError(
+                "Knowledge Object repository create failed."
+            ) from error
+
+        records = response.data
+
+        if records is None:
+            raise RuntimeError(
+                "Knowledge Object repository create returned no result data."
+            )
+
+        if len(records) != 1:
+            raise RuntimeError(
+                "Knowledge Object repository create did not return "
+                "exactly one persisted row."
+            )
+
+        return records[0]
+
+    def update(
+        self,
+        knowledge_object_id: str,
+        values: Mapping[str, Any],
+    ) -> Mapping[str, Any]:
+        """
+        Update an existing canonical Knowledge Object.
+
+        Args:
+            knowledge_object_id:
+                AlphaOmega UUID of the Knowledge Object to update.
+
+            values:
+                Canonical Knowledge Object values to persist.
+
+        Returns:
+            Mapping:
+                The updated Knowledge Object.
+
+        Raises:
+            ValueError:
+                If the Knowledge Object identity or persistence
+                values are missing.
+
+            RuntimeError:
+                If the Knowledge Object cannot be updated or the
+                database does not return exactly one persisted row.
+        """
+
+        if (
+            knowledge_object_id is None
+            or not str(knowledge_object_id).strip()
+        ):
+            raise ValueError(
+                "knowledge_object_id is required."
+            )
+
+        if values is None or not isinstance(values, Mapping):
+            raise ValueError(
+                "Knowledge Object persistence values are required."
+            )
+
+        if not values:
+            raise ValueError(
+                "Knowledge Object persistence values cannot be empty."
+            )
+
+        try:
+            response = (
+                self._client
+                .table(self.TABLE_NAME)
+                .update(dict(values))
+                .eq("id", knowledge_object_id)
+                .execute()
+            )
+        except Exception as error:
+            raise RuntimeError(
+                "Knowledge Object repository update failed."
+            ) from error
+
+        records = response.data
+
+        if records is None:
+            raise RuntimeError(
+                "Knowledge Object repository update returned no result data."
+            )
+
+        if len(records) != 1:
+            raise RuntimeError(
+                "Knowledge Object repository update did not affect "
+                "exactly one row."
+            )
+
+        return records[0]

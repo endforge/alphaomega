@@ -1,0 +1,1193 @@
+###########################################################################################################################
+This file represents the baseline sample test for both OneDrive and OneNote.
+CT in the title refers to Connector and Translator.
+Connector and Translator were tested end to end and this is the result and is recorded as the baseline for future tests.
+This baseline also inculdes the additon of the correlation id UUID.
+Last successful test run: 08.20.2026 @ 2100 hours.
+###########################################################################################################################
+
+PS C:\Users\david\onedrive\AlphaOmega> python -m scripts.code_testing.test_graph_pipeline_sample
+
+==============================================================================
+Microsoft Graph Connector -> Correlation -> Translator Deterministic Regression Validation
+==============================================================================
+
+==============================================================================
+ONEDRIVE WRITINGS CONNECTOR INVENTORY
+==============================================================================
+driveItem    | Writings
+driveItem    | Conversations with Death
+driveItem    | Chapter Four - Unnamed Book.docx
+driveItem    | Chapter One -Unnamed Book.docx
+driveItem    | Chapter Three -Unnamed Book.docx
+driveItem    | Chapter Two -Unnamed Book.docx
+driveItem    | Wake up.docx
+driveItem    | DnD 5e Adv
+driveItem    | Christmas Adventure.docx
+driveItem    | War Comes.docx
+driveItem    | Necromancer
+driveItem    | Necromancer.docx
+driveItem    | Python
+driveItem    | game.over.py
+driveItem    | RH_AudioBook
+driveItem    | Recordings
+driveItem    | David_Audacity_Test.wav
+driveItem    | David_Audio_Recordings_ALL.zip
+driveItem    | Man_In_Crowd_2_c3_n1.wav
+driveItem    | Paulus_c8_n1.wav
+driveItem    | Paulus_c8_n2.wav
+driveItem    | Paulus_c8_n3.wav
+driveItem    | Paulus_c8_n4.wav
+driveItem    | Paulus_c8_n5.wav
+driveItem    | Paulus_c8_n6.wav
+driveItem    | Paulus_c8_n7.wav
+driveItem    | Paulus_c8_n8.wav
+driveItem    | RH_Audio_Recordings_ALL.aup3
+driveItem    | Chpt 01 - Audio Recording.docx
+driveItem    | Chpt 06 - Audio Recording.docx
+driveItem    | Chpt 07 - Audio Recording.docx
+driveItem    | Chpt 12 - Audio Recording.docx
+driveItem    | Chpt 20 - Audio Recording.docx
+driveItem    | Chpt 21 - Audio Recording.docx
+driveItem    | When the Gods Are Away all reading v9.4.docx
+driveItem    | WTGAA Character List by Chapter.docx
+driveItem    | Accomplishments Questionnaire and Statement of Interest.docx
+driveItem    | dmp_print_sig.PNG
+driveItem    | dmp_sig_1.PNG
+driveItem    | dmp_sig_2.PNG
+driveItem    | dmp1.PNG
+driveItem    | dmp2.PNG
+driveItem    | dmp3.PNG
+driveItem    | dmp4.PNG
+driveItem    | dmp5.PNG
+driveItem    | dmp6.PNG
+driveItem    | dmpsig.png
+driveItem    | Morticia_Adams_vs_Trump.png
+driveItem    | park_surname.pdf
+driveItem    | Samuel.docx
+driveItem    | UEC.docx
+
+Total objects: 51
+Types: {'driveItem': 51}
+
+==============================================================================
+ONEDRIVE WRITINGS TRANSLATOR OUTPUT
+==============================================================================
+{'correlation_id': 'fa27b64b-9b87-4ef4-b9b2-3514af850146',
+ 'name': 'Writings',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!sea8cc6beffdb43d7976fbc7da445c639',
+ 'source_created_at': '2017-08-29T16:53:13Z',
+ 'source_modified_at': '2017-08-29T16:53:13Z',
+ 'source_path': '/drive/root:',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!72447'}
+------------------------------------------------------------------------------
+{'correlation_id': '6ce9e323-bdc8-436e-8c8e-fa4b8e971cea',
+ 'name': 'Conversations with Death',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2017-08-29T16:53:26Z',
+ 'source_modified_at': '2017-08-29T16:53:26Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!72448'}
+------------------------------------------------------------------------------
+{'correlation_id': '06586ebe-80f0-4fd8-be41-6a0921857622',
+ 'name': 'Chapter Four - Unnamed Book.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!80991',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_created_at': '2018-10-23T02:52:22Z',
+ 'source_modified_at': '2018-10-23T02:53:02Z',
+ 'source_path': '/drive/root:/Writings/Conversations with Death',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-5f3c01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'e972536e-9004-49ca-a28d-ee9d0290dd23',
+ 'name': 'Chapter One -Unnamed Book.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!77994',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_created_at': '2018-07-04T21:55:35Z',
+ 'source_modified_at': '2018-07-04T21:55:37Z',
+ 'source_path': '/drive/root:/Writings/Conversations with Death',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-aa3001000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'cc267b2d-8399-48a6-aba6-dfc8e511c219',
+ 'name': 'Chapter Three -Unnamed Book.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!80821',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_created_at': '2018-09-20T00:20:58Z',
+ 'source_modified_at': '2018-09-21T05:27:50Z',
+ 'source_path': '/drive/root:/Writings/Conversations with Death',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-b53b01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '03736e04-6196-4e07-bebb-49faae7905df',
+ 'name': 'Chapter Two -Unnamed Book.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!80823',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_created_at': '2018-09-20T00:21:27Z',
+ 'source_modified_at': '2018-09-20T00:21:27Z',
+ 'source_path': '/drive/root:/Writings/Conversations with Death',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-b73b01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '66439a14-007b-44b6-bd7c-f544ec5304a1',
+ 'name': 'Wake up.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!72449',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72448',
+ 'source_created_at': '2017-08-29T16:53:44Z',
+ 'source_modified_at': '2018-07-04T21:53:23Z',
+ 'source_path': '/drive/root:/Writings/Conversations with Death',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-011b01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '7aa38a8b-aefe-49e8-b019-4bde39eec624',
+ 'name': 'DnD 5e Adv',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!74737',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2017-12-14T04:59:58Z',
+ 'source_modified_at': '2017-12-14T04:59:58Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!74737'}
+------------------------------------------------------------------------------
+{'correlation_id': 'a46b6ead-00aa-4d3f-b022-b16f58e8c408',
+ 'name': 'Christmas Adventure.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!74738',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!74737',
+ 'source_created_at': '2017-12-14T05:00:34Z',
+ 'source_modified_at': '2018-10-23T04:14:40Z',
+ 'source_path': '/drive/root:/Writings/DnD 5e Adv',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-f22301000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '4dbd7f95-16ce-4857-88c7-db2c3f53efc7',
+ 'name': 'War Comes.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!187382',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!74737',
+ 'source_created_at': '2018-12-27T19:41:05Z',
+ 'source_modified_at': '2018-12-27T22:27:23Z',
+ 'source_path': '/drive/root:/Writings/DnD 5e Adv',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-f6db02000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '88074627-ca87-4fb4-a1bf-5ba6efbf1e3b',
+ 'name': 'Necromancer',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!s5aaa664038c047179abdd0be53c6ae3a',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2026-01-03T01:49:26Z',
+ 'source_modified_at': '2026-01-03T01:49:25Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!s5aaa664038c047179abdd0be53c6ae3a'}
+------------------------------------------------------------------------------
+{'correlation_id': '04895b5a-8044-427c-a7d3-fa262bb5f4a9',
+ 'name': 'Necromancer.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!81799',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!s5aaa664038c047179abdd0be53c6ae3a',
+ 'source_created_at': '2018-11-18T00:32:45Z',
+ 'source_modified_at': '2018-12-05T04:57:57Z',
+ 'source_path': '/drive/root:/Writings/Necromancer',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-873f01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '4360243f-8d84-4996-bc63-0d97f10d3f1c',
+ 'name': 'Python',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!376491',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2020-11-30T20:11:55Z',
+ 'source_modified_at': '2020-11-30T20:12:03Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!376491'}
+------------------------------------------------------------------------------
+{'correlation_id': '49f708c1-2155-4435-ba24-ecd9a2ef9c89',
+ 'name': 'game.over.py',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!376492',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!376491',
+ 'source_created_at': '2020-11-30T20:12:03Z',
+ 'source_modified_at': '2020-11-30T20:12:03Z',
+ 'source_path': '/drive/root:/Writings/Python',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!376492'}
+------------------------------------------------------------------------------
+{'correlation_id': '0023d36c-774d-460b-835d-54e807158e2e',
+ 'name': 'RH_AudioBook',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2021-08-29T18:29:47Z',
+ 'source_modified_at': '2021-08-29T18:29:47Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381154'}
+------------------------------------------------------------------------------
+{'correlation_id': '9ea2e8a1-7369-4046-a74a-1ffd9cdffa34',
+ 'name': 'Recordings',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-12-03T01:19:19Z',
+ 'source_modified_at': '2021-12-03T01:19:14Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381672'}
+------------------------------------------------------------------------------
+{'correlation_id': '741c4f45-c7fa-4d0b-948e-38c2f9b46aa5',
+ 'name': 'David_Audacity_Test.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381673',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T01:19:33Z',
+ 'source_modified_at': '2021-12-03T01:19:28Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381673'}
+------------------------------------------------------------------------------
+{'correlation_id': '914711ad-a001-484a-b4e8-924d8b11202f',
+ 'name': 'David_Audio_Recordings_ALL.zip',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381700',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-07T02:40:35Z',
+ 'source_modified_at': '2021-12-07T02:35:44Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381700'}
+------------------------------------------------------------------------------
+{'correlation_id': '0a20c056-74d0-42b3-8a04-d1ec6e36ab2d',
+ 'name': 'Man_In_Crowd_2_c3_n1.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381675',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T02:58:59Z',
+ 'source_modified_at': '2021-12-03T02:58:55Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381675'}
+------------------------------------------------------------------------------
+{'correlation_id': '16cfc69a-74d3-4962-b8cd-17e4b51a91fe',
+ 'name': 'Paulus_c8_n1.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381676',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T02:59:41Z',
+ 'source_modified_at': '2021-12-03T02:59:32Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381676'}
+------------------------------------------------------------------------------
+{'correlation_id': 'be12c39f-d467-4303-bdb8-1cb6ef87117d',
+ 'name': 'Paulus_c8_n2.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381677',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T02:59:58Z',
+ 'source_modified_at': '2021-12-03T02:59:55Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381677'}
+------------------------------------------------------------------------------
+{'correlation_id': 'bd819f72-6480-4c03-b07e-63867fe2e3a0',
+ 'name': 'Paulus_c8_n3.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381678',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:00:20Z',
+ 'source_modified_at': '2021-12-03T03:00:16Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381678'}
+------------------------------------------------------------------------------
+{'correlation_id': '2ea6bab9-81a0-4d33-9815-c065b628f1c5',
+ 'name': 'Paulus_c8_n4.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381679',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:00:37Z',
+ 'source_modified_at': '2021-12-03T03:00:32Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381679'}
+------------------------------------------------------------------------------
+{'correlation_id': '5a54686f-e921-4e65-adbd-6db51575fc0d',
+ 'name': 'Paulus_c8_n5.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381680',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:01:13Z',
+ 'source_modified_at': '2021-12-03T03:01:09Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381680'}
+------------------------------------------------------------------------------
+{'correlation_id': '2cc769de-97b4-44a0-95d8-0fab03bfd4bd',
+ 'name': 'Paulus_c8_n6.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381681',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:01:40Z',
+ 'source_modified_at': '2021-12-03T03:01:33Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381681'}
+------------------------------------------------------------------------------
+{'correlation_id': 'de589fcc-33b8-4a9b-8304-5e4c6a4ad1a8',
+ 'name': 'Paulus_c8_n7.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381682',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:01:55Z',
+ 'source_modified_at': '2021-12-03T03:01:51Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381682'}
+------------------------------------------------------------------------------
+{'correlation_id': 'ccd53feb-e504-42c6-bf0b-2755996d4e79',
+ 'name': 'Paulus_c8_n8.wav',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381683',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-03T03:02:21Z',
+ 'source_modified_at': '2021-12-03T03:02:17Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381683'}
+------------------------------------------------------------------------------
+{'correlation_id': '0360527d-ee75-4712-bd4c-21b03afe9edb',
+ 'name': 'RH_Audio_Recordings_ALL.aup3',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381699',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381672',
+ 'source_created_at': '2021-12-07T02:29:16Z',
+ 'source_modified_at': '2021-12-07T02:25:23Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook/Recordings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!381699'}
+------------------------------------------------------------------------------
+{'correlation_id': '3710c41c-6213-4c40-aec0-e8f6e19bd1c0',
+ 'name': 'Chpt 01 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381150',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:27:48Z',
+ 'source_modified_at': '2021-12-07T01:05:58Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-ded005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'eb10887d-29cd-49fe-9b3b-5bd366b3a7ac',
+ 'name': 'Chpt 06 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381152',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:29:19Z',
+ 'source_modified_at': '2021-12-07T01:17:54Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-e0d005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '21cf5bcf-2003-47cf-804c-e03a720e0f57',
+ 'name': 'Chpt 07 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381157',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:32:42Z',
+ 'source_modified_at': '2021-12-07T00:55:12Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-e5d005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '08f133f6-98e8-4ab0-8f20-5122c4c9ed7a',
+ 'name': 'Chpt 12 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381159',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:33:42Z',
+ 'source_modified_at': '2021-08-29T18:34:29Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-e7d005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '77919ff4-124f-4017-9227-083f06682902',
+ 'name': 'Chpt 20 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381161',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:34:44Z',
+ 'source_modified_at': '2021-08-29T18:35:21Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-e9d005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'b086b0e2-17fb-4eed-9d96-16d22e8b62cd',
+ 'name': 'Chpt 21 - Audio Recording.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381163',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:35:33Z',
+ 'source_modified_at': '2021-08-29T18:35:57Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-ebd005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '6f7b781d-8097-40b9-8de3-bac5d59ac22b',
+ 'name': 'When the Gods Are Away all reading v9.4.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381148',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:20:07Z',
+ 'source_modified_at': '2021-12-07T02:59:36Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-dcd005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'ea66c393-7646-42b7-ae37-8edd4849d246',
+ 'name': 'WTGAA Character List by Chapter.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!381155',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!381154',
+ 'source_created_at': '2021-08-29T18:31:19Z',
+ 'source_modified_at': '2021-08-29T19:32:45Z',
+ 'source_path': '/drive/root:/Writings/RH_AudioBook',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-e3d005000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '03f9109c-bc5a-41e0-b46d-70897ada4c86',
+ 'name': 'Accomplishments Questionnaire and Statement of Interest.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!76915',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2018-03-11T04:44:48Z',
+ 'source_modified_at': '2018-03-11T04:45:37Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-732c01000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': 'cb04b171-828d-43d3-b8e8-2df85b9e831f',
+ 'name': 'dmp_print_sig.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367638',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:47:26Z',
+ 'source_modified_at': '2019-04-28T16:52:31Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367638'}
+------------------------------------------------------------------------------
+{'correlation_id': '1e6487b9-5e68-4dc7-b47e-9f49094217e7',
+ 'name': 'dmp_sig_1.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367639',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:47:26Z',
+ 'source_modified_at': '2019-04-28T16:53:39Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367639'}
+------------------------------------------------------------------------------
+{'correlation_id': '3879d2e2-5612-4e66-96ee-d5a40fa60940',
+ 'name': 'dmp_sig_2.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367640',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:47:26Z',
+ 'source_modified_at': '2019-04-28T16:54:16Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367640'}
+------------------------------------------------------------------------------
+{'correlation_id': '4a51632b-21f9-49da-bd41-3bc7d6433587',
+ 'name': 'dmp1.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367560',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:27Z',
+ 'source_modified_at': '2019-04-28T16:24:14Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367560'}
+------------------------------------------------------------------------------
+{'correlation_id': '6262343e-7cfe-442a-af03-a92724b807ab',
+ 'name': 'dmp2.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367561',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:27Z',
+ 'source_modified_at': '2019-04-28T16:25:04Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367561'}
+------------------------------------------------------------------------------
+{'correlation_id': 'eff50ef1-5d77-43dd-a007-3373c9736783',
+ 'name': 'dmp3.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367562',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:28Z',
+ 'source_modified_at': '2019-04-28T16:25:43Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367562'}
+------------------------------------------------------------------------------
+{'correlation_id': 'ea25ef6d-e9c3-422a-a74c-456560023e4a',
+ 'name': 'dmp4.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367557',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:26Z',
+ 'source_modified_at': '2019-04-28T16:26:12Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367557'}
+------------------------------------------------------------------------------
+{'correlation_id': 'e168f1d6-82bb-4c60-919f-0bb409201a4e',
+ 'name': 'dmp5.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367558',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:26Z',
+ 'source_modified_at': '2019-04-28T16:26:43Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367558'}
+------------------------------------------------------------------------------
+{'correlation_id': 'ccdceffd-32a5-4f2e-a19e-8ac5d5f61a4b',
+ 'name': 'dmp6.PNG',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367559',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-28T16:37:26Z',
+ 'source_modified_at': '2019-04-28T16:27:11Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367559'}
+------------------------------------------------------------------------------
+{'correlation_id': '99587b02-2b74-4651-b4c6-39aab14827b3',
+ 'name': 'dmpsig.png',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!367462',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2019-04-15T14:47:14Z',
+ 'source_modified_at': '2019-04-15T14:47:14Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!367462'}
+------------------------------------------------------------------------------
+{'correlation_id': 'd209819d-ea75-4b63-a8fa-c991d25892ef',
+ 'name': 'Morticia_Adams_vs_Trump.png',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!371589',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2020-06-13T22:16:10Z',
+ 'source_modified_at': '2020-06-13T22:16:36Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!371589'}
+------------------------------------------------------------------------------
+{'correlation_id': '341744cd-4de3-4724-8a41-42c8bd86ce17',
+ 'name': 'park_surname.pdf',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!376850',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2021-01-31T01:59:57Z',
+ 'source_modified_at': '2021-01-31T02:00:01Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com?cid=70EE5AA1D6A4DA1F&id=70EE5AA1D6A4DA1F!376850'}
+------------------------------------------------------------------------------
+{'correlation_id': '04e7ba98-3926-4cf0-bfbd-74e345a9f6df',
+ 'name': 'Samuel.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!74247',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2017-11-13T16:49:02Z',
+ 'source_modified_at': '2017-12-07T19:53:49Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-072201000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+{'correlation_id': '5dea4c76-651c-4642-a1f1-42b740a5fd65',
+ 'name': 'UEC.docx',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneDrive',
+ 'source_object_id': '70EE5AA1D6A4DA1F!74177',
+ 'source_parent_object_id': '70EE5AA1D6A4DA1F!72447',
+ 'source_created_at': '2017-11-03T16:48:05Z',
+ 'source_modified_at': '2017-11-07T18:10:22Z',
+ 'source_path': '/drive/root:/Writings',
+ 'source_url': 'https://onedrive.live.com/personal/70ee5aa1d6a4da1f/_layouts/15/doc.aspx?resid=d6a4da1f-5aa1-20ee-8070-c12101000000&cid=70ee5aa1d6a4da1f'}
+------------------------------------------------------------------------------
+
+==============================================================================
+ONEDRIVE WRITINGS VALIDATION
+==============================================================================
+ONEDRIVE WRITINGS: PASS
+
+==============================================================================
+ONENOTE REGRESSION SAMPLE CONNECTOR INVENTORY
+==============================================================================
+notebook     | Games
+section      | Minecraft
+notebook     | Mimic's Tavern
+section      | Homebrew
+page         | Seeds
+page         | My World Realms - Hoesing and Park
+page         | Blueprints
+page         | Storage Build
+page         | Coordinates
+page         | Super GreenHouse Tower
+page         | Untitled
+page         | Untitled
+page         | Future Build Links
+page         | Untitled
+page         | World Names
+page         | Brayden's Seed World
+page         | Bedrock Commands
+page         | To Do
+page         | Avatar of Selûne
+page         | AoS DnD Beyond
+page         | Pact of the Silver Grimoire
+page         | PotSG Dnd Beyone
+page         | Pact of the Tidal Heart
+page         | Rogue’s Laughing Punchline
+page         | Warden of the Word
+page         | WotW DnD Beyond
+page         | Selune Armor
+page         | Armor
+page         | Selune Halbred
+page         | DnD Beyond Version
+page         | Gorge Fronds
+page         | The Echo That Should Not Be
+page         | Gift of the Path
+page         | Solar Tempest
+page         | Dawncleave
+page         | House Always Wins
+page         | HAW DnD Beyond
+page         | It Was A Trap
+page         | IWAT DnD Beyond
+page         | Exit Was Planned
+page         | Untitled
+page         | Winter Dragon Bow
+page         | Totem Staff
+page         | Dagger of Assassins
+
+Total objects: 44
+Types: {'notebook': 2, 'section': 2, 'page': 40}
+
+==============================================================================
+ONENOTE REGRESSION SAMPLE TRANSLATOR OUTPUT
+==============================================================================
+{'correlation_id': '0b4db0bd-85ae-4115-9d54-281c6fbcdccd',
+ 'name': 'Games',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-70EE5AA1D6A4DA1F!707441',
+ 'source_parent_object_id': None,
+ 'source_created_at': '2023-06-10T20:35:15Z',
+ 'source_modified_at': '2025-09-01T14:07:31Z',
+ 'source_path': None,
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '82c82459-4cbf-4ec6-b616-b87adcd80096',
+ 'name': 'Minecraft',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!707441',
+ 'source_created_at': '2025-04-23T16:10:10Z',
+ 'source_modified_at': '2025-04-23T16:10:41Z',
+ 'source_path': 'Games',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'e82b5f8c-4a5d-4c2d-a5ed-53f8fc2ef7c6',
+ 'name': "Mimic's Tavern",
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-70EE5AA1D6A4DA1F!72634',
+ 'source_parent_object_id': None,
+ 'source_created_at': '2017-09-19T16:12:47Z',
+ 'source_modified_at': '2025-09-01T14:07:31Z',
+ 'source_path': None,
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'd9a3726e-2c0f-4def-a1bf-8c86539291bc',
+ 'name': 'Homebrew',
+ 'object_type': 'CONTAINER',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!72634',
+ 'source_created_at': '2026-01-31T00:57:22Z',
+ 'source_modified_at': '2026-04-04T02:25:46Z',
+ 'source_path': "Mimic's Tavern",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '9372c5a2-04d0-4600-81d6-52808848e931',
+ 'name': 'Seeds',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-022282a9e1f9413fb415561ffc95e965!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2021-02-11T23:34:54Z',
+ 'source_modified_at': '2021-02-11T23:34:54Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'aa421478-e5e3-4eb5-9a91-dce580d2b6af',
+ 'name': 'My World Realms - Hoesing and Park',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-04bdb7c4a962016d1809dba96033bf37!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-07-31T16:00:01.834Z',
+ 'source_modified_at': '2024-07-31T16:00:01.834Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '3c446a5e-7675-4aed-bacc-368db74c6778',
+ 'name': 'Blueprints',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-b6244b3f77120ab4008bb79baa120647!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-04bdb7c4a962016d1809dba96033bf37!1-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-08-01T07:17:30.106Z',
+ 'source_modified_at': '2024-08-01T07:17:30.106Z',
+ 'source_path': 'Games/Minecraft/My World Realms - Hoesing and Park',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '32e5955e-7bda-4c30-a40b-14cd3ec365cd',
+ 'name': 'Storage Build',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-3fb2bc1354a103052ae73e34dfc2f8f6!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-04bdb7c4a962016d1809dba96033bf37!1-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-09-28T17:04:24.923Z',
+ 'source_modified_at': '2024-09-28T17:04:24.923Z',
+ 'source_path': 'Games/Minecraft/My World Realms - Hoesing and Park',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'aba62a3f-8594-4a0e-91ca-be14416df9c4',
+ 'name': 'Coordinates',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-ed04f95be1d50796389eb08805031976!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-04bdb7c4a962016d1809dba96033bf37!1-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-08-12T01:56:47.312Z',
+ 'source_modified_at': '2024-08-12T01:56:47.312Z',
+ 'source_path': 'Games/Minecraft/My World Realms - Hoesing and Park',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '30f1952b-20e4-4cd9-84f2-9a7c8c37f5ec',
+ 'name': 'Super GreenHouse Tower',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-ec9c19f8e75209af32b8233be56a894c!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-04bdb7c4a962016d1809dba96033bf37!1-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-09-18T16:15:35.815Z',
+ 'source_modified_at': '2024-09-18T16:15:35.815Z',
+ 'source_path': 'Games/Minecraft/My World Realms - Hoesing and Park',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'd0d86ce7-715c-407d-9286-cac10853fcb0',
+ 'name': 'Untitled',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-dd0352f6ac676e033dc8a1a8ad7f353a!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2023-12-10T18:28:02Z',
+ 'source_modified_at': '2023-12-10T18:28:02Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '7118fe15-a9b3-4db8-b8d6-f7bc0e982d2f',
+ 'name': 'Untitled',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-6fb1013e3a85c80e10b4137ed221b45d!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2023-12-10T18:46:41Z',
+ 'source_modified_at': '2023-12-10T18:46:41Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '37c82059-5526-4e26-b42c-562058966737',
+ 'name': 'Future Build Links',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-93b07b58c57707f417f21816d6b434e1!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-02-22T16:57:19.682Z',
+ 'source_modified_at': '2024-02-22T16:57:19.682Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '3236600b-443e-4273-bed8-ab49404ab8a0',
+ 'name': 'Untitled',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-9e1a0e9618124c0919003f0572046871!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-04-02T00:41:43Z',
+ 'source_modified_at': '2024-04-02T00:41:43Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '05baad8a-1eff-460e-a12f-6c8949ca0430',
+ 'name': 'World Names',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-3609d71d36540dfe0b43fa5403c20148!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-08-17T16:24:15.898Z',
+ 'source_modified_at': '2024-08-17T16:24:15.898Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '9a2e7fb2-1a7f-4776-ad68-c170e36dda40',
+ 'name': "Brayden's Seed World",
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-dbf56701d0fc0d8d2711722b3ea155fe!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2024-12-06T16:47:16.861Z',
+ 'source_modified_at': '2024-12-06T16:47:16.861Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '6587bd64-807a-4f58-bd9d-a8576a070a83',
+ 'name': 'Bedrock Commands',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-803e08da7ff40269190f1ee544ece47e!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2025-02-11T20:52:44.637Z',
+ 'source_modified_at': '2025-02-11T20:52:44.637Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'defdcf9d-0f08-44a6-8e83-28a088b58896',
+ 'name': 'To Do',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-e157f3e52edb01190221990cab0975e2!1-70EE5AA1D6A4DA1F!770054',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!770054',
+ 'source_created_at': '2023-06-10T20:35:15.641Z',
+ 'source_modified_at': '2023-06-10T20:35:15.641Z',
+ 'source_path': 'Games/Minecraft',
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '254d55be-1883-4133-b535-086839721507',
+ 'name': 'Avatar of Selûne',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-2372c791ec9240fd90bdbd110bcb9279!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-01-31T01:30:48.552Z',
+ 'source_modified_at': '2026-01-31T01:30:48.552Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '41977861-21e6-4758-b688-51bc105f9948',
+ 'name': 'AoS DnD Beyond',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-f7466a32319641b5ad7a04be4f6b3108!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-2372c791ec9240fd90bdbd110bcb9279!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:18:26.88Z',
+ 'source_modified_at': '2026-02-15T20:18:26.88Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Avatar of Selûne",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '3d909308-dffa-43b4-97f9-b8b6c8db29ee',
+ 'name': 'Pact of the Silver Grimoire',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-6bce295d09154fa4bc65da4f05720f90!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-01-31T00:57:18.369Z',
+ 'source_modified_at': '2026-01-31T00:57:18.369Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '49b9d4fe-8f15-428f-8721-746bd289020f',
+ 'name': 'PotSG Dnd Beyone',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-68b0822c06c549c081ea5fa740d6ddcb!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-6bce295d09154fa4bc65da4f05720f90!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:20:55.506Z',
+ 'source_modified_at': '2026-02-15T20:20:55.506Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Pact of the Silver Grimoire",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '1aaa7353-c68a-4963-b401-0cd7362861a8',
+ 'name': 'Pact of the Tidal Heart',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-da7796a919fa40278a364582afa8e2c0!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-01-31T00:59:36.526Z',
+ 'source_modified_at': '2026-01-31T00:59:36.526Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '0af0515f-c4d1-491e-b3d9-d528fdb3be94',
+ 'name': 'Rogue’s Laughing Punchline',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-81a3f6a394b94296ae5889c200c1df54!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-01-31T00:58:48.327Z',
+ 'source_modified_at': '2026-01-31T00:58:48.327Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '3e570239-2701-47d2-8753-b9e98bc2772b',
+ 'name': 'Warden of the Word',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-79c6141be4bc4ddeaec8eb3d830dcee9!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-01-22T02:43:26.493Z',
+ 'source_modified_at': '2026-01-22T02:43:26.493Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'ef249bc4-6f20-4ede-909a-010750feb7f2',
+ 'name': 'WotW DnD Beyond',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-4a52bd1099af4575b5d41e6dc89f43bc!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-79c6141be4bc4ddeaec8eb3d830dcee9!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:22:35.401Z',
+ 'source_modified_at': '2026-02-15T20:22:35.401Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Warden of the Word",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '06b8918c-fded-4966-a559-9bb403e59c91',
+ 'name': 'Selune Armor',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-7a6ca18820fc40298c0e257e6cfda4e2!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2024-11-07T19:56:42.965Z',
+ 'source_modified_at': '2024-11-07T19:56:42.965Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '0c766640-023d-48fa-95f5-69575a0003e6',
+ 'name': 'Armor',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-b7bbbaf692da471098e7135a1879ad23!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-7a6ca18820fc40298c0e257e6cfda4e2!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2024-08-29T17:56:20.168Z',
+ 'source_modified_at': '2024-08-29T17:56:20.168Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Selune Armor",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '5d210151-6827-4aa8-9ac1-a22083783e1a',
+ 'name': 'Selune Halbred',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-ae10a1f49b4444d7b2502d4ed000df97!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2025-03-22T13:38:18.853Z',
+ 'source_modified_at': '2025-03-22T13:38:18.853Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '4937d938-2432-4085-b43e-dcf90879cd54',
+ 'name': 'DnD Beyond Version',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-f7311f8f0b6947b699aa077bc7097043!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-ae10a1f49b4444d7b2502d4ed000df97!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-08T19:52:55.832Z',
+ 'source_modified_at': '2026-02-08T19:52:55.832Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Selune Halbred",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '2c157776-c832-4090-a81d-e587bdfc11b9',
+ 'name': 'Gorge Fronds',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-1b065ad49daa497591b31508741bcf25!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-08T17:22:29.942Z',
+ 'source_modified_at': '2026-02-08T17:22:29.942Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '3f28d5a8-2d4b-4119-89d7-203327945602',
+ 'name': 'The Echo That Should Not Be',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-68d15b0d61b84b0dab928da08c1e49ed!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-14T15:49:55.476Z',
+ 'source_modified_at': '2026-02-14T15:49:55.476Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'fca8cf31-b6f6-4bc9-826b-8990e7a32254',
+ 'name': 'Gift of the Path',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-8ccc34bf4e854680bcb28b74da2fd8a1!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:27:33.175Z',
+ 'source_modified_at': '2026-02-15T19:27:33.175Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '389b6cde-3012-4306-8618-3317d802101c',
+ 'name': 'Solar Tempest',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-31c0e85d5c4a40f882241b3ef1c74157!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:49:18.385Z',
+ 'source_modified_at': '2026-02-15T19:49:18.385Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '2ef67ef7-4991-46f6-a74d-c68dba60a923',
+ 'name': 'Dawncleave',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-0123a4a512b34d7888b2074efba45235!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:49:20.157Z',
+ 'source_modified_at': '2026-02-15T19:49:20.157Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'eb814eb4-df0d-4d03-b8e0-a16d3251c4ef',
+ 'name': 'House Always Wins',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-59c54dd0b3be436aac9868cb3650cce2!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:56:17.182Z',
+ 'source_modified_at': '2026-02-15T19:56:17.182Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '39640989-d7f1-4ed4-a936-5c7e2a11f887',
+ 'name': 'HAW DnD Beyond',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-f4dacd6681fa46de810b0c3d1fb3fa06!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-59c54dd0b3be436aac9868cb3650cce2!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:07:31.728Z',
+ 'source_modified_at': '2026-02-15T20:07:31.728Z',
+ 'source_path': "Mimic's Tavern/Homebrew/House Always Wins",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '145fc06a-cb09-4e19-b4c2-b08727779ae2',
+ 'name': 'It Was A Trap',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-70da5c97cb584001a056604353806dcc!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:56:17.643Z',
+ 'source_modified_at': '2026-02-15T19:56:17.643Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '5fb92494-79e0-4df6-81fb-1aa6c3413746',
+ 'name': 'IWAT DnD Beyond',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-d2e9f41d944a480fbe7d7bd8d74653a8!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70da5c97cb584001a056604353806dcc!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:13:27.825Z',
+ 'source_modified_at': '2026-02-15T20:13:27.825Z',
+ 'source_path': "Mimic's Tavern/Homebrew/It Was A Trap",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'cdbb0c03-91db-4c5e-8281-bdc7a9d4a0fc',
+ 'name': 'Exit Was Planned',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-7be578da0d3e43968308e7190debf47f!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T19:56:18.066Z',
+ 'source_modified_at': '2026-02-15T19:56:18.066Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '7a5a221f-342a-4bd7-b8ef-7fcbde5f5588',
+ 'name': 'Untitled',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-19ffa0a2bf0c43d48f2835031d569215!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-7be578da0d3e43968308e7190debf47f!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:13:37.236Z',
+ 'source_modified_at': '2026-02-15T20:13:37.236Z',
+ 'source_path': "Mimic's Tavern/Homebrew/Exit Was Planned",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'dfbe01ee-3cfe-4062-8d78-2ccd6c2f01bb',
+ 'name': 'Winter Dragon Bow',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-30e91280e6f04a7681d69d4978723032!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-15T20:28:14.168Z',
+ 'source_modified_at': '2026-02-15T20:28:14.168Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': '0f1ff1eb-5bec-428e-9b5d-47c3137a4007',
+ 'name': 'Totem Staff',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-c11a53552fd644668568500b6f57b60d!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-20T22:23:27.661Z',
+ 'source_modified_at': '2026-02-20T22:23:27.661Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+{'correlation_id': 'bc0ba7b0-41e7-49ec-b4af-3a13e17db418',
+ 'name': 'Dagger of Assassins',
+ 'object_type': 'CONTENT',
+ 'source_name': 'OneNote',
+ 'source_object_id': '0-ec5fb7a73a3b4e988cced5d99fb2cbb3!1-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_parent_object_id': '0-70EE5AA1D6A4DA1F!scb8a6be59d2649429e4297e2cfa1b0ff',
+ 'source_created_at': '2026-02-20T23:03:54.475Z',
+ 'source_modified_at': '2026-02-20T23:03:54.475Z',
+ 'source_path': "Mimic's Tavern/Homebrew",
+ 'source_url': None}
+------------------------------------------------------------------------------
+
+==============================================================================
+ONENOTE REGRESSION SAMPLE VALIDATION
+==============================================================================
+ONENOTE REGRESSION SAMPLE: PASS
+
+==============================================================================
+FINAL RESULT
+==============================================================================
+OneDrive Writings : PASS
+OneNote Regression: PASS
+
+Connector -> Correlation -> Translator deterministic regression validation: PASS

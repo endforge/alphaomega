@@ -21,9 +21,11 @@ Tests:
     11. Nullable parent and timestamp - both changed
     12. DiscoverySection completion
     13. DiscoverySection locking
+    14. Correlation identity propagation
 """
 
 from datetime import datetime, timezone
+from uuid import uuid4
 
 from common.security.local_credential_provider import LocalCredentialProvider
 
@@ -103,9 +105,16 @@ def build_translator_record(
 ):
     """
     Build a controlled OneNote TranslatorRecord for Discovery testing.
+
+    Each record receives a unique orchestration correlation UUID so
+    Discovery correlation propagation can be validated.
     """
 
     record = TranslatorRecord()
+
+    record.correlation_id = str(
+        uuid4()
+    )
 
     record.source_name = "OneNote"
     record.source_object_id = source_object_id
@@ -143,6 +152,84 @@ def validate_existing_object_identity(
             f"{test_name} did not preserve the expected "
             "previous content hash."
         )
+
+
+def validate_correlation_identity(
+    translator_records,
+    discovery_records,
+):
+    """
+    Verify one-for-one propagation of orchestration correlation identity.
+
+    Discovery must preserve the exact correlation UUID assigned to each
+    TranslatorRecord. Discovery must not generate or replace correlation
+    identity.
+    """
+
+    if (
+        len(translator_records)
+        != len(discovery_records)
+    ):
+        raise RuntimeError(
+            "Correlation validation cannot proceed because Translator "
+            "and Discovery record counts differ. "
+            f"Translator: {len(translator_records)}. "
+            f"Discovery: {len(discovery_records)}."
+        )
+
+    seen_correlation_ids = set()
+
+    for index, (
+        translator_record,
+        discovery_record,
+    ) in enumerate(
+        zip(
+            translator_records,
+            discovery_records,
+        )
+    ):
+        expected_correlation_id = (
+            translator_record.correlation_id
+        )
+
+        actual_correlation_id = (
+            discovery_record.correlation_id
+        )
+
+        if actual_correlation_id is None:
+            raise RuntimeError(
+                "DiscoveryRecord is missing correlation identity. "
+                f"Record index: {index}."
+            )
+
+        if (
+            actual_correlation_id
+            != expected_correlation_id
+        ):
+            raise RuntimeError(
+                "Discovery changed correlation identity. "
+                f"Record index: {index}. "
+                f"Expected: {expected_correlation_id!r}. "
+                f"Actual: {actual_correlation_id!r}."
+            )
+
+        if (
+            actual_correlation_id
+            in seen_correlation_ids
+        ):
+            raise RuntimeError(
+                "Duplicate correlation identity detected in "
+                "Discovery output. "
+                f"Correlation ID: {actual_correlation_id!r}."
+            )
+
+        seen_correlation_ids.add(
+            actual_correlation_id
+        )
+
+    print(
+        "Discovery correlation identity propagation PASSED."
+    )
 
 
 # ============================================================================
@@ -385,6 +472,7 @@ def main():
     ):
         print(
             f"Record {index}: "
+            f"correlation_id={result.correlation_id}, "
             f"sync_state={result.sync_state}, "
             f"comparison_reason={result.comparison_reason!r}, "
             f"knowledge_object_id={result.knowledge_object_id}, "
@@ -416,6 +504,19 @@ def main():
             "Discovery did not return the expected number "
             "of DiscoveryRecords."
         )
+
+    # ==================================================================
+    # Correlation validation
+    # ==================================================================
+
+    validate_correlation_identity(
+        translator_records=(
+            translator_section.translated_records
+        ),
+        discovery_records=(
+            discovery_section.discovery_records
+        ),
+    )
 
     (
         new_result,
