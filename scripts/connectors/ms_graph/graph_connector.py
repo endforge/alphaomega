@@ -14,6 +14,9 @@ Responsibilities:
     - Respect Microsoft Graph throttling.
     - Preserve source hierarchy information when Microsoft Graph
       provides enough information to prove that hierarchy.
+    - Preserve the containing OneNote Section modification timestamp
+      with OneNote Page connector metadata for downstream synchronization
+      comparison.
     - Return Connector output only after complete enumeration succeeds.
 
 This module does NOT:
@@ -351,8 +354,8 @@ class GraphConnector(BaseConnector):
         The raw Microsoft Graph object itself is never modified.
 
         connector_metadata contains Connector-derived source hierarchy
-        information that cannot be expressed directly by the raw Graph
-        object.
+        and source context information that cannot be expressed directly
+        by the raw Graph object.
         """
 
         if connector_metadata is None:
@@ -584,6 +587,11 @@ class GraphConnector(BaseConnector):
             section hierarchy
             page/subpage hierarchy when Microsoft Graph supplies
             trustworthy page ordering information
+
+        For OneNote Pages, Connector also preserves the containing
+        Section's lastModifiedDateTime as connector metadata. Microsoft
+        Graph Page lastModifiedDateTime is not relied upon as the
+        authoritative page-content synchronization signal.
         """
 
         raw_objects = []
@@ -956,6 +964,11 @@ class GraphConnector(BaseConnector):
 
         If Microsoft Graph does not provide trustworthy ordering
         information, Connector fails instead of guessing the hierarchy.
+
+        Microsoft Graph does not reliably update a OneNote Page's
+        lastModifiedDateTime when its body content changes. The containing
+        Section's lastModifiedDateTime is therefore preserved with every
+        Page as connector metadata for downstream synchronization use.
         """
 
         section = (
@@ -982,6 +995,12 @@ class GraphConnector(BaseConnector):
                 "OneNote section is missing "
                 "its source object ID."
             )
+
+        section_modified_at = (
+            section.get(
+                "lastModifiedDateTime"
+            )
+        )
 
         pages_endpoint = (
             "/me/onenote/sections/"
@@ -1146,6 +1165,9 @@ class GraphConnector(BaseConnector):
 
                         "page_order":
                             page.get("order"),
+
+                        "source_section_modified_at":
+                            section_modified_at,
                     },
                 )
             )

@@ -14,6 +14,23 @@ on TranslatorRecord objects.
 Synchronization correlation identity is supplied by Orchestration.
 Translator propagates correlation identity but does not generate,
 modify, or interpret it.
+
+OneNote synchronization note:
+    Microsoft Graph does not reliably update a Page object's
+    lastModifiedDateTime when page content changes.
+
+    The Graph Connector therefore preserves the containing OneNote
+    Section's lastModifiedDateTime in connector metadata as
+    source_section_modified_at.
+
+    For OneNote Page records only, Translator uses that Section
+    modification timestamp as the canonical source_modified_at
+    synchronization signal.
+
+    This behavior is intentionally conservative. A modification to any
+    page within a OneNote Section can cause other pages in the same
+    synchronized Section to appear MODIFIED. Downstream synchronization
+    remains responsible for processing those records normally.
 """
 
 from collections.abc import Mapping
@@ -416,6 +433,40 @@ class GraphTranslator(BaseTranslator):
                 canonical_field,
                 value,
             )
+
+        # --------------------------------------------------------------------
+        # OneNote Page modification signal
+        # --------------------------------------------------------------------
+        #
+        # Microsoft Graph Page.lastModifiedDateTime is not reliable for
+        # detecting OneNote page body changes.
+        #
+        # Connector preserves the containing Section's
+        # lastModifiedDateTime as source_section_modified_at.
+        #
+        # For OneNote Pages only, use that value as the canonical
+        # source_modified_at synchronization signal.
+        #
+        # The raw Microsoft Graph Page metadata remains unchanged and is
+        # preserved below in record.metadata.
+        # --------------------------------------------------------------------
+
+        if (
+            record.source_name == "OneNote"
+            and source_object_type == "page"
+        ):
+
+            section_modified_at = (
+                connector_metadata.get(
+                    "source_section_modified_at"
+                )
+            )
+
+            if section_modified_at is not None:
+
+                record.source_modified_at = (
+                    section_modified_at
+                )
 
         # --------------------------------------------------------------------
         # OneNote blank-page normalization
