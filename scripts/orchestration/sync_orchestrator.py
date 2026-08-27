@@ -1,5 +1,6 @@
 """
-File: sync_orchestrator.py
+File:
+    sync_orchestrator.py
 
 Purpose:
     Coordinates execution of one AlphaOmega synchronization run.
@@ -10,11 +11,12 @@ The Synchronization Orchestrator owns:
     - Correlation identity creation after Connector and before Translator.
     - Cross-stage SynchronizationAssociation construction.
     - Translator execution.
+    - Routing of canonical CONTENT records into Discovery.
     - Discovery execution.
-    - Routing of eligible records.
-    - Extraction execution for NEW/MODIFIED records requiring extraction.
-    - Load execution for successfully extracted NEW records and
-      MODIFIED records whose canonical content changed.
+    - Routing of eligible records into Extraction.
+    - Extraction execution for NEW/MODIFIED CONTENT records.
+    - Load execution for successfully extracted NEW CONTENT records and
+      MODIFIED CONTENT records whose canonical content changed.
     - Stage-level failure control flow.
 
 The Synchronization Orchestrator does NOT:
@@ -26,9 +28,23 @@ The Synchronization Orchestrator does NOT:
     - Persist Knowledge Objects directly.
     - Generate stage-owned data.
 
+Canonical CONTAINER records:
+    - Receive orchestration correlation identity.
+    - Receive SynchronizationAssociation objects.
+    - Pass through Translator.
+    - Stop successfully after Translator.
+    - Do not enter Discovery.
+    - Do not enter Extraction.
+    - Do not enter Load.
+    - Do not become Knowledge Objects.
+
 A synchronization request is supplied by a future request/application
 layer.
 """
+
+from common.object_types import (
+    CONTENT,
+)
 
 from scripts.sync.sync_translation_input import (
     TranslationInput,
@@ -41,6 +57,38 @@ from scripts.sync.sync_association import (
 from scripts.sync.sync_state import (
     SyncState,
 )
+
+
+# ============================================================================
+# Discovery Input View
+# ============================================================================
+
+class _DiscoveryInputView:
+    """
+    Orchestration-owned routing view supplied to Discovery.
+
+    This is intentionally NOT a TranslatorSection.
+
+    Translator owns the complete TranslatorSection and locks it after
+    successful completion.
+
+    Orchestration owns downstream routing. This view exposes only the
+    successfully translated canonical CONTENT records that are eligible
+    to enter Discovery while leaving the original TranslatorSection
+    unchanged.
+    """
+
+    def __init__(
+        self,
+        translated_records,
+    ):
+        """
+        Store the routed Translator records as an immutable tuple.
+        """
+
+        self.translated_records = tuple(
+            translated_records
+        )
 
 
 class SynchronizationOrchestrator:
@@ -201,6 +249,8 @@ class SynchronizationOrchestrator:
             #
             # Associations exist for every Connector object before
             # Translator begins.
+            #
+            # This includes both canonical CONTENT and CONTAINER objects.
             # ================================================================
 
             associations = (
@@ -232,26 +282,57 @@ class SynchronizationOrchestrator:
             )
 
             # ================================================================
-            # Discovery
+            # Discovery Routing
+            #
+            # Translator owns the complete TranslatorSection.
+            #
+            # Orchestration owns routing.
+            #
+            # Only canonical CONTENT records are eligible to enter
+            # Discovery.
+            #
+            # CONTAINER records terminate successfully after Translator.
+            # Their SynchronizationAssociation remains available for
+            # correlation, diagnostics, and hierarchy traceability.
             # ================================================================
 
-            discovery_section = (
-                self._discovery_service.run(
+            discovery_records = (
+                self._select_discovery_records(
                     translator_section
                 )
             )
 
-            self._validate_locked_section(
-                discovery_section,
-                "DiscoverySection",
-            )
+            discovery_section = None
 
-            self._attach_discovery_records(
-                associations=associations,
-                discovery_section=(
-                    discovery_section
-                ),
-            )
+            if discovery_records:
+
+                discovery_input = (
+                    _DiscoveryInputView(
+                        discovery_records
+                    )
+                )
+
+                # ============================================================
+                # Discovery
+                # ============================================================
+
+                discovery_section = (
+                    self._discovery_service.run(
+                        discovery_input
+                    )
+                )
+
+                self._validate_locked_section(
+                    discovery_section,
+                    "DiscoverySection",
+                )
+
+                self._attach_discovery_records(
+                    associations=associations,
+                    discovery_section=(
+                        discovery_section
+                    ),
+                )
 
             # ================================================================
             # Extraction Routing
@@ -390,6 +471,10 @@ class SynchronizationOrchestrator:
 
             raise
 
+    # ========================================================================
+    # Association Construction
+    # ========================================================================
+
     @staticmethod
     def _create_associations(
         translation_input,
@@ -425,6 +510,10 @@ class SynchronizationOrchestrator:
             )
 
         return associations
+
+    # ========================================================================
+    # Translator Association
+    # ========================================================================
 
     @staticmethod
     def _attach_translator_records(
@@ -463,6 +552,47 @@ class SynchronizationOrchestrator:
                 translator_record
             )
 
+    # ========================================================================
+    # Discovery Routing
+    # ========================================================================
+
+    @staticmethod
+    def _select_discovery_records(
+        translator_section,
+    ):
+        """
+        Select canonical CONTENT TranslatorRecords for Discovery.
+
+        CONTAINER records terminate successfully after Translator.
+
+        TranslatorSection remains unchanged and continues to contain
+        the complete Translator output.
+        """
+
+        eligible = []
+
+        for translator_record in (
+            translator_section.translated_records
+        ):
+
+            if (
+                translator_record.object_type
+                != CONTENT
+            ):
+                continue
+
+            eligible.append(
+                translator_record
+            )
+
+        return tuple(
+            eligible
+        )
+
+    # ========================================================================
+    # Discovery Association
+    # ========================================================================
+
     @staticmethod
     def _attach_discovery_records(
         *,
@@ -470,7 +600,8 @@ class SynchronizationOrchestrator:
         discovery_section,
     ):
         """
-        Attach successfully discovered records by correlation ID.
+        Attach successfully discovered CONTENT records
+        by correlation ID.
         """
 
         for discovery_record in (
@@ -502,18 +633,40 @@ class SynchronizationOrchestrator:
                     "TranslatorRecord."
                 )
 
+            if (
+                association.translator_record.object_type
+                != CONTENT
+            ):
+                raise RuntimeError(
+                    "Discovery produced a record for a "
+                    "non-CONTENT synchronization object."
+                )
+
             association.attach_discovery(
                 discovery_record
             )
+
+    # ========================================================================
+    # Extraction Routing
+    # ========================================================================
 
     @staticmethod
     def _select_extraction_associations(
         associations,
     ):
         """
-        Select NEW and MODIFIED records requiring Extraction.
+        Select CONTENT associations eligible for Extraction.
 
-        UNCHANGED records stop after Discovery.
+        Requirements:
+            - TranslatorRecord exists.
+            - TranslatorRecord is canonical CONTENT.
+            - DiscoveryRecord exists.
+            - Synchronization state is NEW or MODIFIED.
+            - Discovery requires Extraction.
+
+        UNCHANGED CONTENT records stop after Discovery.
+
+        CONTAINER records cannot reach Extraction.
         """
 
         eligible = []
@@ -521,6 +674,19 @@ class SynchronizationOrchestrator:
         for association in (
             associations.values()
         ):
+
+            translator_record = (
+                association.translator_record
+            )
+
+            if translator_record is None:
+                continue
+
+            if (
+                translator_record.object_type
+                != CONTENT
+            ):
+                continue
 
             discovery_record = (
                 association.discovery_record
@@ -544,12 +710,6 @@ class SynchronizationOrchestrator:
             ):
                 continue
 
-            if (
-                association.translator_record
-                is None
-            ):
-                continue
-
             eligible.append(
                 association
             )
@@ -558,12 +718,16 @@ class SynchronizationOrchestrator:
             eligible
         )
 
+    # ========================================================================
+    # Load Routing
+    # ========================================================================
+
     @staticmethod
     def _select_load_associations(
         extraction_associations,
     ):
         """
-        Select successfully extracted records eligible for Load.
+        Select successfully extracted CONTENT records eligible for Load.
 
         NEW records proceed to Load after successful Extraction.
 
@@ -580,6 +744,19 @@ class SynchronizationOrchestrator:
         for association in (
             extraction_associations
         ):
+
+            translator_record = (
+                association.translator_record
+            )
+
+            if translator_record is None:
+                continue
+
+            if (
+                translator_record.object_type
+                != CONTENT
+            ):
+                continue
 
             extraction_record = (
                 association.extraction_record
@@ -638,6 +815,10 @@ class SynchronizationOrchestrator:
             eligible
         )
 
+    # ========================================================================
+    # Extraction Association
+    # ========================================================================
+
     @staticmethod
     def _attach_extraction_records(
         *,
@@ -646,6 +827,8 @@ class SynchronizationOrchestrator:
     ):
         """
         Attach successful Extraction records by correlation ID.
+
+        Only CONTENT associations are valid here.
         """
 
         association_map = {
@@ -675,9 +858,31 @@ class SynchronizationOrchestrator:
                     "correlation_id."
                 )
 
+            if (
+                association.translator_record
+                is None
+            ):
+                raise RuntimeError(
+                    "Extraction record has no associated "
+                    "TranslatorRecord."
+                )
+
+            if (
+                association.translator_record.object_type
+                != CONTENT
+            ):
+                raise RuntimeError(
+                    "Extraction produced a record for a "
+                    "non-CONTENT synchronization object."
+                )
+
             association.attach_extraction(
                 extraction_record
             )
+
+    # ========================================================================
+    # Section Validation
+    # ========================================================================
 
     @staticmethod
     def _validate_locked_section(
@@ -702,12 +907,31 @@ class SynchronizationOrchestrator:
                 f"{section_name} is not locked."
             )
 
+    # ========================================================================
+    # Counts
+    # ========================================================================
+
     @staticmethod
     def _build_counts(
         associations,
     ):
         """
-        Build minimal orchestration-level synchronization counts.
+        Build orchestration-level synchronization counts.
+
+        Association count includes every Connector object.
+
+        Stage counts reflect actual stage participation:
+            translated:
+                every association with TranslatorRecord
+
+            discovered:
+                CONTENT associations with DiscoveryRecord
+
+            extracted:
+                CONTENT associations with ExtractionRecord
+
+            NEW/MODIFIED/UNCHANGED:
+                associations having the applicable Discovery state
         """
 
         values = tuple(
@@ -798,6 +1022,10 @@ class SynchronizationOrchestrator:
             "unchanged":
                 unchanged,
         }
+
+    # ========================================================================
+    # Request Validation
+    # ========================================================================
 
     @staticmethod
     def _validate_run_request(
